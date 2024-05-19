@@ -9,22 +9,22 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #fef2f2;
-            display: flex;
             justify-content: center;
             align-items: center;
-            height: auto;
+            width: auto;
         }
         .container {
-            height: auto;
+            margin: 30% auto;
+            width: auto;
             background-color: #fff;
-            padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         form {
+            margin: 0px auto;
             width: auto;
-            height: auto;
+            padding: 50px;
         }
         
         h2 {
@@ -80,8 +80,8 @@
 </head>
 <body>
     <div class="container">
-      <h2>ApkS2Life</h2>
         <form id="shorten-form">
+          <h2>ApkS2Life</h2>
             <div class="form-group">
                 <label for="original-link">Link gốc:</label>
                 <input type="text" id="original-link" name="original-link" required>
@@ -117,7 +117,7 @@
                 if (result.success) {
                     Swal.fire({
                         title: 'Thành công!',
-                        text: `Link rút gọn của bạn: ${result.shortLink}`,
+                        html: `<span>Link rút gọn của bạn:</span><br>[ <a href="${result.shortLink}" style="text-decoration:none;">${result.shortLink} </a>]`,
                         icon: 'success',
                         confirmButtonText: 'OK'
                     });
@@ -140,4 +140,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
