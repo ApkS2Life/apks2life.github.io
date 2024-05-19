@@ -1,8 +1,3 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<title>Redirecting...</title>
 <script type="text/javascript">
 var currentURL = window.location.href;
 
@@ -26,7 +21,3 @@ function redirectToOriginalLink(keyword) {
         .catch(error => console.error('Error:', error));
 }
 </script>
-</head>
-<body>
-</body>
-</html>
