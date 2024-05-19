@@ -27,7 +27,7 @@
             margin-bottom: 5px;
         }
         input[type="text"] {
-            width: 100%;
+            width: auto;
             padding: 8px;
             box-sizing: border-box;
             border: 1px solid #ccc;
