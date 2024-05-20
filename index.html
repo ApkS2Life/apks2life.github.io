@@ -11,7 +11,10 @@
                 .then(data => {
                     if (data.success) {
                         var originalLink = data.originalLink;
-                        if (originalLink.includes("drive.google.com") || originalLink.includes("docs.google.com")) {
+                        var isGoogleDriveLink = originalLink.includes("drive.google.com") || originalLink.includes("docs.google.com");
+                        var isSourceBlogspot = document.referrer.includes('https://apks2life.blogspot.com');
+
+                        if (isGoogleDriveLink && !isSourceBlogspot) {
                             var a = document.createElement('a');
                             a.href = originalLink;
                             a.target = '_blank';
