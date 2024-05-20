@@ -10,7 +10,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.open(data.originalLink, '_blank');
+                    window.location.href = data.originalLink;
                 } else {
                     console.error('Không tìm thấy link gốc.');
                 }
