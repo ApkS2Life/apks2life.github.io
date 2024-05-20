@@ -10,10 +10,15 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        if (data.originalLink) {
-                            window.location.href = data.originalLink;
+                        var originalLink = data.originalLink;
+                        var isGoogleDriveLink = originalLink.includes("drive.google.com") || originalLink.includes("docs.google.com");
+                        var referrer = document.referrer || '';
+                        var isReferrerBlogspot = referrer.includes('https://apks2life.blogspot.com');
+
+                        if (isGoogleDriveLink && !isReferrerBlogspot) {
+                            window.open(originalLink, "_blank");
                         } else {
-                            console.error('Dữ liệu phản hồi không chứa liên kết gốc.');
+                            window.location.href = originalLink;
                         }
                     } else {
                         console.error('Không tìm thấy link gốc.');
