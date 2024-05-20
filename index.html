@@ -13,7 +13,7 @@
                     const newLink = document.creatElement('a');
                     newLink.href = data.originalLink;
                     newLink.target = '_blank';
-                    newLink.click();
+                    window.location.href = newLink;
                 } else {
                     console.error('Không tìm thấy link gốc.');
                 }
