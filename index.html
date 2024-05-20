@@ -10,17 +10,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Redirect to the original link
                         window.location.href = data.originalLink;
-                        // Automatically click the download button
-                        setTimeout(function(){
-                            var downloadButton = document.querySelector('.download');
-                            if(downloadButton) {
-                                downloadButton.click();
-                            } else {
-                                console.error('Không tìm thấy nút tải xuống.');
-                            }
-                        }, 2000); // Wait for 2 seconds before clicking download button
                     } else {
                         console.error('Không tìm thấy link gốc.');
                     }
