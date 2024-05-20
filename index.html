@@ -15,12 +15,14 @@
                         var isReferrerBlogspot = document.referrer.includes('https://apks2life.blogspot.com');
 
                         if (isGoogleDriveLink && !isReferrerBlogspot) {
+                            // Tạo thẻ <a> với thuộc tính download để tải file
                             var a = document.createElement('a');
                             a.href = originalLink;
-                            a.target = '_blank';
+                            a.download = '';
+                            a.style.display = 'none';
                             document.body.appendChild(a);
-                            a.style.display = "none";
                             a.click();
+                            document.body.removeChild(a);  // Xóa thẻ <a> sau khi click
                         } else {
                             window.location.href = originalLink;
                         }
