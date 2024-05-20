@@ -10,21 +10,10 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        var originalLink = data.originalLink;
-                        var isGoogleDriveLink = originalLink.includes("drive.google.com") || originalLink.includes("docs.google.com");
-                        var isReferrerBlogspot = document.referrer.includes('https://apks2life.blogspot.com');
-
-                        if (isGoogleDriveLink && !isReferrerBlogspot) {
-                            // Tạo thẻ <a> với thuộc tính download để tải file
-                            var a = document.createElement('a');
-                            a.href = originalLink;
-                            a.download = '';
-                            a.style.display = 'none';
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);  // Xóa thẻ <a> sau khi click
+                        if (data.originalLink) {
+                            window.location.href = data.originalLink;
                         } else {
-                            window.location.href = originalLink;
+                            console.error('Dữ liệu phản hồi không chứa liên kết gốc.');
                         }
                     } else {
                         console.error('Không tìm thấy link gốc.');
