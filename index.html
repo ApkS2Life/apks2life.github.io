@@ -12,8 +12,7 @@
                 if (data.success) {
                     const newLink = document.creatElement('a');
                     newLink.href = data.originalLink;
-                    newLink.target = '_blank';
-                    window.location.href = newLink;
+                    window.open('newLink', '_blank');
                 } else {
                     console.error('Không tìm thấy link gốc.');
                 }
