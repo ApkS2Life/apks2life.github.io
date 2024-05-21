@@ -24,9 +24,9 @@
                 
                 // Chuyển hướng đến URL mới với ref
                 window.location.href = newURL;
-            } else if (currentURL.includes('?ref=')) {
+            } else if (currentURL.includes('/?ref=')) {
                 // Lấy keyword từ URL hiện tại nếu đã chuyển hướng với ref
-                var refKeywordIndex = currentURL.indexOf('?ref=') + 5;
+                var refKeywordIndex = currentURL.indexOf('/?ref=') + 6;
                 keyword = currentURL.substring(refKeywordIndex);
                 fetchOriginalLink(keyword);
             } else {
