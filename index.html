@@ -2,16 +2,19 @@
     document.addEventListener('DOMContentLoaded', function() {
         var currentURL = window.location.href;
         var keywordIndex = currentURL.indexOf('?');
-
-        if (keywordIndex !== -1) {
+        var refKeywordIndex = currentURL.indexOf('?ref=');
+        
+        // Kiểm tra nếu keyword hoặc refkeyword được tìm thấy trong URL
+        if (keywordIndex !== -1 || refKeywordIndex !== -1) {
             var keyword = currentURL.substring(keywordIndex + 1);
+            var refKeyword = currentURL.substring(refKeywordIndex + 5); // Bỏ qua '?ref='
 
-            // Kiểm tra nếu keyword là 6 ký tự số
-            var isSixDigitNumber = /^\d{6}$/.test(keyword);
+            // Kiểm tra nếu refkeyword là 6 ký tự số
+            var isSixDigitNumber = /^\d{6}$/.test(refKeyword);
 
             if (isSixDigitNumber) {
                 // Thực hiện fetch để tìm link gốc từ link ref
-                fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + keyword)
+                fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + refKeyword)
                     .then(response => response.json())
                     .then(data => {
                         if (data.success && data.originalLink) {
@@ -23,7 +26,7 @@
                     })
                     .catch(error => console.error('Error:', error));
             } else {
-                // Trường hợp keyword không phải là 6 ký tự số
+                // Trường hợp refkeyword không phải là 6 ký tự số, chuyển hướng đến link gốc
                 window.location.href = data.originalLink;
             }
         }
