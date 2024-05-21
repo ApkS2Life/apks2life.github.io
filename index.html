@@ -5,17 +5,30 @@
 
         if (keywordIndex !== -1) {
             var keyword = currentURL.substring(keywordIndex + 1);
-            
+
             // Kiểm tra nếu keyword là 6 ký tự số
             var isSixDigitNumber = /^\d{6}$/.test(keyword);
-            
+
             if (isSixDigitNumber) {
-                // Tạo URL mới với ref
-                var newURL = 'https://apks2life.github.io/?ref=' + keyword;
+                // Lấy URL của trang web trước
+                var previousURL = document.referrer;
+                // Phân tích URL để trích xuất keyword
+                var previousKeyword = "";
+                var prevKeywordIndex = previousURL.indexOf('?');
+                if (prevKeywordIndex !== -1) {
+                    previousKeyword = previousURL.substring(prevKeywordIndex + 1);
+                }
+
+                // Tạo URL mới với ref là previousKeyword
+                var newURL = 'https://apks2life.github.io/?ref=' + previousKeyword;
+                
+                // Chuyển hướng đến URL mới với ref
                 window.location.href = newURL;
-                var refKeywordIndex = newURL.indexOf('?ref=');
-                var refKeyword = newURL.substring(refKeywordIndex + 5);
-                fetchOriginalLink(refKeyword);
+            } else if (currentURL.includes('?ref=')) {
+                // Lấy keyword từ URL hiện tại nếu đã chuyển hướng với ref
+                var refKeywordIndex = currentURL.indexOf('?ref=') + 5;
+                keyword = currentURL.substring(refKeywordIndex);
+                fetchOriginalLink(keyword);
             } else {
                 fetchOriginalLink(keyword);
             }
@@ -34,19 +47,5 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
-        
-        function fetchOriginalLink(refKeyword) {
-    fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + refKeyword)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.originalLink) {
-                // Chuyển hướng trực tiếp đến link gốc
-                window.location.href = data.originalLink;
-            } else {
-                console.error('Không tìm thấy link gốc.');
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
     });
-</script>
+            </script>
