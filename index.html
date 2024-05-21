@@ -10,23 +10,21 @@
             var isSixDigitNumber = /^\d{6}$/.test(keyword);
 
             if (isSixDigitNumber) {
-                // Tạo URL mới với ref
-                var newURL = 'https://apks2life.github.io/?ref=' + keyword;
-                
-                // Chuyển hướng đến URL mới
-                window.location.href = newURL;
-
-                // Thực hiện fetch sau khi chuyển hướng
+                // Thực hiện fetch để tìm link gốc từ link ref
                 fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + keyword)
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success) {
-                             window.location.href = data.originalLink;
+                        if (data.success && data.originalLink) {
+                            // Chuyển hướng trực tiếp đến link gốc
+                            window.location.href = data.originalLink;
                         } else {
                             console.error('Không tìm thấy link gốc.');
                         }
                     })
                     .catch(error => console.error('Error:', error));
+            } else {
+                // Trường hợp keyword không phải là 6 ký tự số
+                window.location.href = data.originalLink;
             }
         }
     });
