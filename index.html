@@ -10,16 +10,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        var originalLink = data.originalLink;
-                        var isGoogleDriveLink = originalLink.includes("drive.google.com") || originalLink.includes("docs.google.com");
-                        var referrer = document.referrer || '';
-                        var isReferrerBlogspot = referrer.includes('https://apks2life.blogspot.com');
-
-                        if (isGoogleDriveLink && !isReferrerBlogspot) {
-                            window.location.href = originalLink;
-                        } else {
-                            window.location.href = originalLink;
-                        }
+                         window.location.href = data.originalLink;
                     } else {
                         console.error('Không tìm thấy link gốc.');
                     }
