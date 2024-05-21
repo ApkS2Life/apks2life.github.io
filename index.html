@@ -1,58 +1,41 @@
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var currentURL = window.location.href;
-        var keywordIndex = currentURL.indexOf('?');
+document.addEventListener('DOMContentLoaded', function() {
+    var currentURL = window.location.href;
+    var keywordIndex = currentURL.indexOf('?');
 
-        if (keywordIndex !== -1) {
-            var keyword = currentURL.substring(keywordIndex + 1);
+    if (keywordIndex !== -1) {
+        var keyword = currentURL.substring(keywordIndex + 1);
 
-            // Kiểm tra nếu keyword là 6 ký tự số
-            var isSixDigitNumber = /^\d{6}$/.test(keyword);
-
-            if (isSixDigitNumber) {
-                // Lấy URL của trang web trước
-                var previousURL = document.referrer;
-                // Phân tích URL để trích xuất keyword
-                var previousKeyword = "";
-                var prevKeywordIndex = previousURL.indexOf('?');
-                if (prevKeywordIndex !== -1) {
-                    previousKeyword = previousURL.substring(prevKeywordIndex + 1);
-                }
-
-                // Tạo URL mới với ref là previousKeyword
-                var newURL = 'https://apks2life.github.io/?ref=' + previousKeyword;
-                
-                // Chuyển hướng đến URL mới với ref
-                window.location.href = newURL;
-            } else if (currentURL.includes('?ref=')) {
-                // Lấy URL của trang web trước
-                var previousURL = document.referrer;
-                // Phân tích URL để trích xuất keyword
-                var previousKeyword = "";
-                var prevKeywordIndex = previousURL.indexOf('?');
-                if (prevKeywordIndex !== -1) {
-                    previousKeyword = previousURL.substring(prevKeywordIndex + 1);
-                }
-                var keyword = previousKeyword;
-                // Sử dụng previousKeyword để gọi hàm fetchOriginalLink
-                fetchOriginalLink(keyword);
-            } else {
-                fetchOriginalLink(keyword);
-            }
+        if (/^\d{6}$/.test(keyword)) {
+            // Nếu keyword là một số 6 chữ số, lưu vào session storage và chuyển hướng đến trang thứ hai
+            sessionStorage.setItem('keyword', keyword);
+            window.location.href = `https://apks2life.github.io/?ref=${keyword}`;
+        } else if (currentURL.includes('?ref=')) {
+            // Trường hợp trang thứ hai trả về, trích xuất tham số 'ref' và chuyển hướng đến trang cuối cùng
+            var keyword = currentURL.substring(keywordIndex + 5);
+            fetchOriginalLink(keyword);
+        } else {
+            // Nếu không, tiếp tục với việc chuyển hướng như bình thường
+            fetchOriginalLink(keyword);
         }
+    }
 
-        function fetchOriginalLink(keyword) {
-            fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + keyword)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.originalLink) {
-                        // Chuyển hướng trực tiếp đến link gốc
-                        window.location.href = data.originalLink;
-                    } else {
-                        console.error('Không tìm thấy link gốc.');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-    });
+    function fetchOriginalLink(keyword) {
+        fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + keyword)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success && data.originalLink) {
+                    window.location.href = data.originalLink;
+                } else {
+                    console.error('Không tìm thấy link gốc.');
+                }
+            })
+            .catch(error => console.error('Fetch error:', error));
+    }
+});
 </script>
