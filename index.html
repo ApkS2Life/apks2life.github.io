@@ -12,6 +12,7 @@
             if (isSixDigitNumber) {
                 // Tạo URL mới với ref
                 var newURL = 'https://apks2life.github.io/?ref=' + keyword;
+                window.location.href = newURL;
                 var refKeywordIndex = newURL.indexOf('?ref=');
                 var refKeyword = newURL.substring(refKeywordIndex + 5);
                 fetchOriginalLink(refKeyword);
