@@ -24,11 +24,18 @@
                 
                 // Chuyển hướng đến URL mới với ref
                 window.location.href = newURL;
-            } else if (currentURL.includes('/?ref=')) {
-                // Lấy keyword từ URL hiện tại nếu đã chuyển hướng với ref
-                var refKeywordIndex = currentURL.indexOf('/?ref=') + 6;
-                keyword = currentURL.substring(refKeywordIndex);
-                fetchOriginalLink(keyword);
+            } else if (currentURL.includes('?ref=')) {
+                // Lấy URL của trang web trước
+                var previousURL = document.referrer;
+                // Phân tích URL để trích xuất keyword
+                var previousKeyword = "";
+                var prevKeywordIndex = previousURL.indexOf('?');
+                if (prevKeywordIndex !== -1) {
+                    previousKeyword = previousURL.substring(prevKeywordIndex + 1);
+                }
+                
+                // Sử dụng previousKeyword để gọi hàm fetchOriginalLink
+                fetchOriginalLink(previousKeyword);
             } else {
                 fetchOriginalLink(keyword);
             }
@@ -48,4 +55,4 @@
                 .catch(error => console.error('Error:', error));
         }
     });
-            </script>
+</script>
