@@ -16,7 +16,7 @@
                         var isReferrerBlogspot = referrer.includes('https://apks2life.blogspot.com');
 
                         if (isGoogleDriveLink && !isReferrerBlogspot) {
-                            window.open(originalLink, "_blank");
+                            window.location.href = originalLink;
                         } else {
                             window.location.href = originalLink;
                         }
