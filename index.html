@@ -33,9 +33,9 @@
                 if (prevKeywordIndex !== -1) {
                     previousKeyword = previousURL.substring(prevKeywordIndex + 1);
                 }
-                
+                var keyword = previousKeyword;
                 // Sử dụng previousKeyword để gọi hàm fetchOriginalLink
-                fetchOriginalLink(previousKeyword);
+                fetchOriginalLink(keyword);
             } else {
                 fetchOriginalLink(keyword);
             }
