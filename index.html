@@ -2,48 +2,50 @@
     document.addEventListener('DOMContentLoaded', function() {
         var currentURL = window.location.href;
         var keywordIndex = currentURL.indexOf('?');
-        var refKeywordIndex = currentURL.indexOf('/?ref=');
 
-        // Kiểm tra nếu keyword hoặc refkeyword được tìm thấy trong URL
         if (keywordIndex !== -1) {
             var keyword = currentURL.substring(keywordIndex + 1);
-
-            // Nếu refKeywordIndex tồn tại, lấy giá trị từ '?ref='
-            var refKeyword = '';
-            if (refKeywordIndex !== -1) {
-                refKeyword = currentURL.substring(refKeywordIndex + 6); // Bỏ qua '/?ref='
-            }
-
+            
             // Kiểm tra nếu keyword là 6 ký tự số
-            var isSixDigitNumber = /^\d{6}$/.test(refKeyword);
-
+            var isSixDigitNumber = /^\d{6}$/.test(keyword);
+            
             if (isSixDigitNumber) {
-                // Thực hiện fetch để tìm link gốc từ link ref
-                fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + refKeyword)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success && data.originalLink) {
-                            // Chuyển hướng trực tiếp đến link gốc
-                            window.location.href = data.originalLink;
-                        } else {
-                            console.error('Không tìm thấy link gốc.');
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
+                // Tạo URL mới với ref
+                var newURL = 'https://apks2life.github.io/?ref=' + keyword;
+                var refKeywordIndex = newURL.indexOf('?ref=');
+                var refKeyword = newURL.substring(refKeywordIndex + 5);
+                fetchOriginalLink(refKeyword);
             } else {
-                // Trường hợp refkeyword không phải là 6 ký tự số hoặc không tồn tại, chuyển hướng đến link gốc
-                fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + keyword)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success && data.originalLink) {
-                            // Chuyển hướng trực tiếp đến link gốc
-                            window.location.href = data.originalLink;
-                        } else {
-                            console.error('Không tìm thấy link gốc.');
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
+                fetchOriginalLink(keyword);
             }
         }
+
+        function fetchOriginalLink(keyword) {
+            fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + keyword)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.originalLink) {
+                        // Chuyển hướng trực tiếp đến link gốc
+                        window.location.href = data.originalLink;
+                    } else {
+                        console.error('Không tìm thấy link gốc.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        
+        function fetchOriginalLink(refKeyword) {
+    fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + refKeyword)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.originalLink) {
+                // Chuyển hướng trực tiếp đến link gốc
+                window.location.href = data.originalLink;
+            } else {
+                console.error('Không tìm thấy link gốc.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
     });
 </script>
