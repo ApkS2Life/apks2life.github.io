@@ -6,16 +6,28 @@
         if (keywordIndex !== -1) {
             var keyword = currentURL.substring(keywordIndex + 1);
 
-            fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + keyword)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                         window.location.href = data.originalLink;
-                    } else {
-                        console.error('Không tìm thấy link gốc.');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+            // Kiểm tra nếu keyword là 6 ký tự số
+            var isSixDigitNumber = /^\d{6}$/.test(keyword);
+
+            if (isSixDigitNumber) {
+                // Tạo URL mới với ref
+                var newURL = 'https://apks2life.github.io/?ref=' + keyword;
+                
+                // Chuyển hướng đến URL mới
+                window.location.href = newURL;
+
+                // Thực hiện fetch sau khi chuyển hướng
+                fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + keyword)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                             window.location.href = data.originalLink;
+                        } else {
+                            console.error('Không tìm thấy link gốc.');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
         }
     });
 </script>
