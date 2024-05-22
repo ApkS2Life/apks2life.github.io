@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
             sessionStorage.setItem('keyword', keyword);
             const newURL = 'https://apks2life.github.io/?ref=' + keyword;
             window.location.href = newURL;
-        } else if (currentURL.includes('?ref=')) {
+        } else if (currentURL.includes('ref=')) {
             // Trường hợp trang thứ hai trả về, trích xuất tham số 'ref' và chuyển hướng đến trang cuối cùng
-            keyword = currentURL.substring(currentURL.indexOf('?ref=') + 5);
+            keyword = currentURL.substring(currentURL.indexOf('ref=') + 4);
             fetchOriginalLink(keyword);
         } else {
             // Nếu không, tiếp tục với việc chuyển hướng như bình thường
