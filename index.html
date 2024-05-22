@@ -1,7 +1,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var currentURL = window.location.href;
-    var keywordIndex = currentURL.indexOf('ref=');
+    var keywordIndex = currentURL.indexOf('src=');
 
     if (keywordIndex !== -1) {
         var keyword = currentURL.substring(keywordIndex + 4);
