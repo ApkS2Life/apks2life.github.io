@@ -1,10 +1,10 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var currentURL = window.location.href;
-    var keywordIndex = currentURL.indexOf('?');
+    var keywordIndex = currentURL.indexOf('ref=');
 
     if (keywordIndex !== -1) {
-        var keyword = currentURL.substring(keywordIndex + 1);
+        var keyword = currentURL.substring(keywordIndex + 4);
         fetchOriginalLink(keyword);
     }
 });
