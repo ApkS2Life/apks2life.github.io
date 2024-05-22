@@ -1,16 +1,22 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Lấy URL hiện tại
     var currentURL = window.location.href;
-    var keywordIndex = currentURL.indexOf('src=');
+    // Tìm vị trí của dấu hỏi '?'
+    var keywordIndex = currentURL.indexOf('?');
 
+    // Nếu tìm thấy keyword trong URL hiện tại
     if (keywordIndex !== -1) {
-        var keyword = currentURL.substring(keywordIndex + 4);
+        // Trích xuất keyword từ URL
+        var keyword = currentURL.substring(keywordIndex + 1);
+        // Gọi hàm fetchOriginalLink với keyword đã trích xuất
         fetchOriginalLink(keyword);
     }
 });
 
 function fetchOriginalLink(keyword) {
-    fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + keyword)
+    // Gọi API để lấy link gốc
+    fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + encodeURIComponent(keyword))
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -19,7 +25,12 @@ function fetchOriginalLink(keyword) {
         })
         .then(data => {
             if (data.success && data.originalLink) {
-                window.location.href = data.originalLink;
+                // Thêm keyword vào link gốc
+                var originalLinkWithKeyword = data.originalLink.includes('?') 
+                    ? data.originalLink + '&' + keyword 
+                    : data.originalLink + '?' + keyword;
+                // Chuyển hướng đến link gốc với keyword
+                window.location.href = originalLinkWithKeyword;
             } else {
                 console.error('Không tìm thấy link gốc.');
             }
