@@ -5,7 +5,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (keywordIndex !== -1) {
         var keyword = currentURL.substring(keywordIndex + 1);
-        fetchOriginalLink(keyword);
+        if (/^\d{6}$/.test(keyword)) {  // Check if the keyword is exactly 6 digits
+            fetchOriginalLink(keyword);
+        } else {
+            fetchOriginalLink(keyword);
+        }
     }
 });
 
@@ -26,4 +30,4 @@ function fetchOriginalLink(keyword) {
         })
         .catch(error => console.error('Fetch error:', error.message));
 }
-                          </script>
+</script>
