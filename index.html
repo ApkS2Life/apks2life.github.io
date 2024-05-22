@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     var currentURL = new URL(window.location.href);
     var params = new URLSearchParams(currentURL.search);
-    var keyword = params.get('ref') || params.get('keyword');
+    var keyword = params.get('src') || params.get('keyword');
 
     if (keyword) {
         fetchOriginalLink(keyword);
