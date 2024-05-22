@@ -5,7 +5,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (keywordIndex !== -1) {
         var keyword = currentURL.substring(keywordIndex + 1);
-        fetchOriginalLink(keyword);
+
+        if (/^\d{6}$/.test(keyword)) {
+            // Nếu từ khóa là một chuỗi gồm 6 chữ số, sử dụng trực tiếp
+            fetchOriginalLink(keyword);
+        } else if (keyword.startsWith('ref=')) {
+            // Nếu từ khóa chứa 'ref=', trích xuất phần sau 'ref='
+            keyword = keyword.substring(4);
+            fetchOriginalLink(keyword);
+        } else {
+            fetchOriginalLink(keyword);
+        }
     }
 });
 
@@ -15,16 +25,15 @@ function fetchOriginalLink(keyword) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            return response.text(); // Trả về dữ liệu dưới dạng văn bản
+            return response.json();
         })
         .then(data => {
-            var jsonData = JSON.parse(data); // Chuyển đổi văn bản JSON thành đối tượng JavaScript
-            if (jsonData.success && jsonData.originalLink) {
-                window.location.href = jsonData.originalLink;
+            if (data.success && data.originalLink) {
+                window.location.href = data.originalLink;
             } else {
                 console.error('Không tìm thấy link gốc.');
             }
         })
-        .catch(error => console.error('Fetch error:', error.message)); // Hiển thị thông báo lỗi
+        .catch(error => console.error('Fetch error:', error));
 }
 </script>
