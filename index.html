@@ -2,13 +2,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Lấy URL hiện tại
     var currentURL = window.location.href;
-    // Tìm vị trí của dấu hỏi '?'
-    var keywordIndex = currentURL.indexOf('src=');
+    // Tạo một đối tượng URL để dễ dàng truy cập các tham số query
+    var urlParams = new URLSearchParams(window.location.search);
 
-    // Nếu tìm thấy keyword trong URL hiện tại
-    if (keywordIndex !== -1) {
-        // Trích xuất keyword từ URL
-        var keyword = currentURL.substring(keywordIndex + 5);
+    // Lấy giá trị của tham số 'src'
+    var keyword = urlParams.get('src');
+
+    // Nếu tìm thấy keyword trong URL
+    if (keyword) {
         // Gọi hàm fetchOriginalLink với keyword đã trích xuất
         fetchOriginalLink(keyword);
     }
@@ -16,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function fetchOriginalLink(keyword) {
     // Gọi API để lấy link gốc
-    fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + keyword)
+    fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + encodeURIComponent(keyword))
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -27,8 +28,8 @@ function fetchOriginalLink(keyword) {
             if (data.success && data.originalLink) {
                 // Thêm keyword vào link gốc
                 var originalLinkWithKeyword = data.originalLink.includes('?') 
-                    ? data.originalLink + '&' + keyword 
-                    : data.originalLink + '?' + keyword;
+                    ? data.originalLink + '&src=' + encodeURIComponent(keyword) 
+                    : data.originalLink + '?src=' + encodeURIComponent(keyword);
                 // Chuyển hướng đến link gốc với keyword
                 window.location.href = originalLinkWithKeyword;
             } else {
