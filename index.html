@@ -9,10 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (/^\d{6}$/.test(keyword)) {
             // Nếu keyword là một số 6 chữ số, lưu vào session storage và chuyển hướng đến trang thứ hai
             sessionStorage.setItem('keyword', keyword);
-            window.location.href = `https://apks2life.github.io/?ref=${keyword}`;
+            const keywordWithDash = currentURL.replace('?', '?ref=');
+            window.location.href = `https://apks2life.github.io/?${keywordWithDash}`;
         } else if (currentURL.includes('?ref=')) {
             // Trường hợp trang thứ hai trả về, trích xuất tham số 'ref' và chuyển hướng đến trang cuối cùng
-            var keyword = currentURL.substring(keywordIndex + 5);
+            var keyword = currentURL.substring(currentURL.indexOf('?ref=') + 5);
             fetchOriginalLink(keyword);
         } else {
             // Nếu không, tiếp tục với việc chuyển hướng như bình thường
@@ -38,4 +39,4 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Fetch error:', error));
     }
 });
-</script>
+                                           </script>
