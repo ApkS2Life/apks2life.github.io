@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function fetchOriginalLink(keyword) {
     // Gọi API để lấy link gốc
-    fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + encodeURIComponent(keyword))
+    fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + keyword)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -28,8 +28,8 @@ function fetchOriginalLink(keyword) {
             if (data.success && data.originalLink) {
                 // Thêm keyword vào link gốc
                 var originalLinkWithKeyword = data.originalLink.includes('?') 
-                    ? data.originalLink + '&src=' + encodeURIComponent(keyword) 
-                    : data.originalLink + '?src=' + encodeURIComponent(keyword);
+                    ? data.originalLink + '&src=' + keyword
+                    : data.originalLink + '?src=' + keyword;
                 // Chuyển hướng đến link gốc với keyword
                 window.location.href = originalLinkWithKeyword;
             } else {
