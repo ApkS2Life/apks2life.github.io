@@ -5,12 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (keywordIndex !== -1) {
         var keyword = currentURL.substring(keywordIndex + 1);
-
-        if (/^\d{6}$/.test(keyword)) {
-            fetchOriginalLink(keyword);
-        } else {
-            fetchOriginalLink(keyword);
-        }
+        fetchOriginalLink(keyword);
     }
 });
 
