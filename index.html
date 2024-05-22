@@ -15,7 +15,7 @@ function fetchOriginalLink(keyword) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            return response.json(); // Trả về dữ liệu dưới dạng JSON
+            return response.json();
         })
         .then(data => {
             if (data.success && data.originalLink) {
@@ -24,6 +24,6 @@ function fetchOriginalLink(keyword) {
                 console.error('Không tìm thấy link gốc.');
             }
         })
-        .catch(error => console.error('Fetch error:', error.message)); // Hiển thị thông báo lỗi
+        .catch(error => console.error('Fetch error:', error.message));
 }
-</script>
+                          </script>
