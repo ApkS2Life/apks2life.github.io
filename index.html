@@ -1,41 +1,49 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy URL hiện tại
-    var currentURL = window.location.href;
-    // Tạo một đối tượng URL để dễ dàng truy cập các tham số query
-    var urlParams = new URLSearchParams(window.location.search);
-
-    // Lấy giá trị của tham số 'src'
-    var keyword = urlParams.get('src');
+    // Lấy giá trị của tham số 'src' từ URL
+    var keyword = new URLSearchParams(window.location.search).get('src');
 
     // Nếu tìm thấy keyword trong URL
     if (keyword) {
         // Gọi hàm fetchOriginalLink với keyword đã trích xuất
         fetchOriginalLink(keyword);
+    } else {
+        console.error('Không có từ khóa trong URL.');
+        alert('Không có từ khóa trong URL.');
     }
 });
 
 function fetchOriginalLink(keyword) {
+    // Mã hóa keyword để đảm bảo an toàn
+    var encodedKeyword = encodeURIComponent(keyword);
+    
     // Gọi API để lấy link gốc
-    fetch('https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=' + keyword)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success && data.originalLink) {
-                // Thêm keyword vào link gốc
-                var originalLinkWithKeyword = data.originalLink.includes('?') 
-                    ? data.originalLink + '&src=' + keyword
-                    : data.originalLink + '?src=' + keyword;
-                // Chuyển hướng đến link gốc với keyword
-                window.location.href = originalLinkWithKeyword;
-            } else {
-                console.error('Không tìm thấy link gốc.');
-            }
-        })
-        .catch(error => console.error('Fetch error:', error.message));
+    fetch(`https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeyword}`, {
+        method: 'GET',  // Sử dụng phương thức GET
+        cache: 'no-cache'  // Bỏ cache để nhận dữ liệu mới nhất
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Phản hồi từ mạng không hợp lệ');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success && data.originalLink) {
+            // Thêm keyword vào link gốc
+            var originalLinkWithKeyword = data.originalLink.includes('?') 
+                ? data.originalLink + '&src=' + encodedKeyword
+                : data.originalLink + '?src=' + encodedKeyword;
+            // Chuyển hướng đến link gốc với keyword
+            window.location.href = originalLinkWithKeyword;
+        } else {
+            console.error('Không tìm thấy liên kết gốc trong phản hồi.');
+            alert('Không tìm thấy liên kết gốc.');
+        }
+    })
+    .catch(error => {
+        console.error('Lỗi Fetch:', error.message);
+        alert('Đã xảy ra lỗi khi lấy liên kết gốc.');
+    });
 }
 </script>
