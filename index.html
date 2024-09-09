@@ -15,7 +15,7 @@ function fetchOriginalLink(keywordOrRefid) {
     var encodedKeyword = encodeURIComponent(keywordOrRefid);
 
     // Xây dựng URL với keyword hoặc refid
-    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeyword}`;
+    var url = `https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?keyword=${encodedKeyword}`;
 
     fetch(url, {
         method: 'GET',
@@ -29,8 +29,20 @@ function fetchOriginalLink(keywordOrRefid) {
     })
     .then(data => {
         if (data.success && data.originalLink) {
-            // Chuyển hướng đến liên kết gốc
-            window.location.href = data.originalLink;
+            // Kiểm tra xem refid có trong query string không
+            const refidParam = new URLSearchParams(window.location.search).get('refid');
+            let redirectUrl = data.originalLink;
+
+            // Nếu có refid, thêm nó vào URL gốc
+            if (refidParam) {
+                // Thêm refid vào cuối URL dưới dạng query string
+                const urlObject = new URL(data.originalLink);
+                urlObject.searchParams.append('refid', refidParam);
+                redirectUrl = urlObject.toString();
+            }
+
+            // Chuyển hướng đến liên kết gốc với refid (nếu có)
+            window.location.href = redirectUrl;
         } else {
             console.error('Không tìm thấy liên kết gốc cho từ khóa hoặc refid:', keywordOrRefid);
             alert('Không tìm thấy liên kết gốc cho từ khóa hoặc refid.');
