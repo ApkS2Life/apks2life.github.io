@@ -1,45 +1,44 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-            var keyword = new URLSearchParams(window.location.search).get('keyword');
-            var refid = new URLSearchParams(window.location.search).get('refid');
+    // Lấy phần chuỗi truy vấn sau dấu '?' trong URL
+    var queryString = window.location.search.substring(1); 
 
-            // Nếu có từ khóa hoặc refid, thực hiện tìm kiếm
-            if (keyword || refid) {
-                fetchOriginalLink(keyword || refid);
-            } else {
-                console.error('Không có từ khóa hoặc refid trong URL.');
-                alert('Không có từ khóa hoặc refid trong URL.');
-            }
-        });
+    if (queryString) {
+        fetchOriginalLink(queryString);
+    } else {
+        console.error('Không có từ khóa hoặc refid trong URL.');
+        alert('Không có từ khóa hoặc refid trong URL.');
+    }
+});
 
-        function fetchOriginalLink(keyword) {
-            var encodedKeyword = encodeURIComponent(keyword);
+function fetchOriginalLink(keywordOrRefid) {
+    var encodedKeyword = encodeURIComponent(keywordOrRefid);
 
-            // Xây dựng URL với keyword hoặc refid (dưới dạng keyword)
-            var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeyword}`;
+    // Xây dựng URL với keyword hoặc refid
+    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeyword}`;
 
-            fetch(url, {
-                method: 'GET',
-                cache: 'no-cache'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Phản hồi từ mạng không hợp lệ');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success && data.originalLink) {
-                    // Chuyển hướng đến liên kết gốc
-                    window.location.href = data.originalLink;
-                } else {
-                    console.error('Không tìm thấy liên kết gốc cho từ khóa hoặc refid:', keyword);
-                    alert('Không tìm thấy liên kết gốc cho từ khóa hoặc refid.');
-                }
-            })
-            .catch(error => {
-                console.error('Lỗi Fetch:', error.message);
-                alert('Đã xảy ra lỗi khi lấy liên kết gốc.');
-            });
+    fetch(url, {
+        method: 'GET',
+        cache: 'no-cache'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Phản hồi từ mạng không hợp lệ');
         }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success && data.originalLink) {
+            // Chuyển hướng đến liên kết gốc
+            window.location.href = data.originalLink;
+        } else {
+            console.error('Không tìm thấy liên kết gốc cho từ khóa hoặc refid:', keywordOrRefid);
+            alert('Không tìm thấy liên kết gốc cho từ khóa hoặc refid.');
+        }
+    })
+    .catch(error => {
+        console.error('Lỗi Fetch:', error.message);
+        alert('Đã xảy ra lỗi khi lấy liên kết gốc.');
+    });
+}
 </script>
