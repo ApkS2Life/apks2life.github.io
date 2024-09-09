@@ -16,7 +16,7 @@ function fetchOriginalLink(keyword, refid) {
     var encodedKeyword = encodeURIComponent(keyword || '');
     var encodedRefid = encodeURIComponent(refid || '');
     
-    // Chọn từ khóa hoặc refid tùy thuộc vào điều kiện
+    // Xây dựng URL với cả keyword và refid nếu có
     var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?${encodedKeyword ? `keyword=${encodedKeyword}` : ''}${encodedKeyword && encodedRefid ? '&' : ''}${encodedRefid ? `refid=${encodedRefid}` : ''}`;
 
     fetch(url, {
@@ -43,4 +43,4 @@ function fetchOriginalLink(keyword, refid) {
         alert('Đã xảy ra lỗi khi lấy liên kết gốc.');
     });
 }
-            </script>
+</script>
