@@ -1,20 +1,25 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var keyword = new URLSearchParams(window.location.search).get('keyword');
+    var refid = new URLSearchParams(window.location.search).get('refid');
 
-    if (keyword) {
-        fetchOriginalLink(keyword);
+    // Nếu có từ khóa hoặc refid, thực hiện tìm kiếm
+    if (keyword || refid) {
+        fetchOriginalLink(keyword, refid);
     } else {
-        console.error('Không có từ khóa trong URL.');
-        alert('Không có từ khóa trong URL.');
+        console.error('Không có từ khóa hoặc refid trong URL.');
+        alert('Không có từ khóa hoặc refid trong URL.');
     }
 });
 
-function fetchOriginalLink(keyword) {
-    var encodedKeyword = encodeURIComponent(keyword);
-    var isRefid = /^\d{6}$/.test(keyword);
+function fetchOriginalLink(keyword, refid) {
+    var encodedKeyword = encodeURIComponent(keyword || '');
+    var encodedRefid = encodeURIComponent(refid || '');
+    
+    // Xây dựng URL với cả keyword và refid nếu có
+    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?${encodedKeyword ? `keyword=${encodedKeyword}` : ''}${encodedKeyword && encodedRefid ? '&' : ''}${encodedRefid ? `refid=${encodedRefid}` : ''}`;
 
-    fetch(`https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeyword}`, {
+    fetch(url, {
         method: 'GET',
         cache: 'no-cache'
     })
@@ -26,13 +31,11 @@ function fetchOriginalLink(keyword) {
     })
     .then(data => {
         if (data.success && data.originalLink) {
-            var redirectUrl = isRefid 
-                ? (data.originalLink.includes('?') ? `${data.originalLink}&refid=${encodedKeyword}` : `${data.originalLink}?refid=${encodedKeyword}`)
-                : data.originalLink;
-            window.location.href = redirectUrl;
+            // Chuyển hướng đến liên kết gốc
+            window.location.href = data.originalLink;
         } else {
-            console.error('Không tìm thấy liên kết gốc cho từ khóa:', keyword);
-            alert('Không tìm thấy liên kết gốc cho từ khóa.');
+            console.error('Không tìm thấy liên kết gốc cho từ khóa hoặc refid:', keyword, refid);
+            alert('Không tìm thấy liên kết gốc cho từ khóa hoặc refid.');
         }
     })
     .catch(error => {
