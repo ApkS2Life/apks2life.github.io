@@ -1,15 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy keyword từ URL sau phần https://apks2life.github.io/
-    var keyword = window.location.href.split("https://apks2life.github.io")[1].trim();
-    
-    // Xóa dấu '/' nếu có
-    if (keyword.startsWith('/')) {
-        keyword = keyword.slice(1);
-    }
-    
-    // Nếu tìm thấy keyword trong URL
+    // Lấy keyword từ URL sau dấu '?'
+    var urlParams = new URLSearchParams(window.location.search);
+    var keyword = urlParams.get('keyword');
+
     if (keyword) {
-        // Gọi hàm fetchOriginalLink với keyword đã trích xuất
         fetchOriginalLink(keyword);
     } else {
         console.error('Không có từ khóa trong URL.');
@@ -18,20 +12,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchOriginalLink(keyword) {
-    // Mã hóa keyword để đảm bảo an toàn
     var encodedKeyword = encodeURIComponent(keyword);
-    
-    // Gọi API để lấy link gốc
+
     fetch(`https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeyword}`, {
         method: 'GET',
         cache: 'no-cache'
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Phản hồi từ mạng không hợp lệ');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         if (data.success && data.originalLink) {
             // Nếu keyword là chuỗi 6 chữ số
@@ -41,10 +28,10 @@ function fetchOriginalLink(keyword) {
                     ? `${data.originalLink}&refid=${encodedKeyword}`
                     : `${data.originalLink}?refid=${encodedKeyword}`;
                 // Chuyển hướng đến link gốc với refid
-                window.location.href = originalLinkWithKeyword;
+                window.location.replace(originalLinkWithKeyword);
             } else {
                 // Chuyển hướng đến link gốc mà không thêm refid
-                window.location.href = data.originalLink;
+                window.location.replace(data.originalLink);
             }
         } else {
             alert('Không tìm thấy liên kết gốc.');
