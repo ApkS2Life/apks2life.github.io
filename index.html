@@ -5,19 +5,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Nếu có từ khóa hoặc refid, thực hiện tìm kiếm
     if (keyword || refid) {
-        fetchOriginalLink(keyword, refid);
+        fetchOriginalLink(keyword || refid);
     } else {
         console.error('Không có từ khóa hoặc refid trong URL.');
         alert('Không có từ khóa hoặc refid trong URL.');
     }
 });
 
-function fetchOriginalLink(keyword, refid) {
-    var encodedKeyword = encodeURIComponent(keyword || '');
-    var encodedRefid = encodeURIComponent(refid || '');
-    
-    // Xây dựng URL với cả keyword và refid nếu có
-    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?${encodedKeyword ? `keyword=${encodedKeyword}` : ''}${encodedKeyword && encodedRefid ? '&' : ''}${encodedRefid ? `refid=${encodedRefid}` : ''}`;
+function fetchOriginalLink(keyword) {
+    var encodedKeyword = encodeURIComponent(keyword);
+
+    // Xây dựng URL với keyword hoặc refid (dưới dạng keyword)
+    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeyword}`;
 
     fetch(url, {
         method: 'GET',
@@ -34,7 +33,7 @@ function fetchOriginalLink(keyword, refid) {
             // Chuyển hướng đến liên kết gốc
             window.location.href = data.originalLink;
         } else {
-            console.error('Không tìm thấy liên kết gốc cho từ khóa hoặc refid:', keyword, refid);
+            console.error('Không tìm thấy liên kết gốc cho từ khóa hoặc refid:', keyword);
             alert('Không tìm thấy liên kết gốc cho từ khóa hoặc refid.');
         }
     })
