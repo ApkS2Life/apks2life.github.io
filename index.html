@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy keyword sau dấu ? trong URL
-    var keyword = new URLSearchParams(window.location.search).toString();
+    // Lấy phần keyword từ URL sau dấu '?' 
+    var keyword = window.location.search.substring(1);
 
     // Nếu tìm thấy keyword trong URL
     if (keyword) {
@@ -13,8 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchOriginalLink(keyword) {
+    // Mã hóa keyword để đảm bảo an toàn
+    var encodedKeyword = encodeURIComponent(keyword);
+
     // Gọi API để lấy link gốc
-    fetch(`https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${keyword}`, {
+    fetch(`https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeyword}`, {
         method: 'GET',
         cache: 'no-cache'
     })
@@ -30,8 +33,8 @@ function fetchOriginalLink(keyword) {
             if (/^\d{6}$/.test(keyword)) {
                 // Thêm refid vào link gốc
                 var originalLinkWithKeyword = data.originalLink.includes('?') 
-                    ? `${data.originalLink}&refid=${keyword}`
-                    : `${data.originalLink}?refid=${keyword}`;
+                    ? `${data.originalLink}&refid=${encodedKeyword}`
+                    : `${data.originalLink}?refid=${encodedKeyword}`;
                 // Chuyển hướng đến link gốc với refid
                 window.location.href = originalLinkWithKeyword;
             } else {
