@@ -1,19 +1,20 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var keyword = new URLSearchParams(window.location.search).get('keyword');
+    var refid = new URLSearchParams(window.location.search).get('refid');
 
-    if (keyword) {
-        fetchOriginalLink(keyword);
+    if (keyword || refid) {
+        fetchOriginalLink(keyword || refid);
     } else {
-        console.error('Không có từ khóa trong URL.');
-        alert('Không có từ khóa trong URL.');
+        console.error('Không có từ khóa hoặc refid trong URL.');
+        alert('Không có từ khóa hoặc refid trong URL.');
     }
 });
 
-function fetchOriginalLink(keyword) {
-    var encodedKeyword = encodeURIComponent(keyword);
+function fetchOriginalLink(identifier) {
+    var encodedIdentifier = encodeURIComponent(identifier);
 
-    fetch(`https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeyword}`, {
+    fetch(`https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedIdentifier}&refid=${encodedIdentifier}`, {
         method: 'GET',
         cache: 'no-cache'
     })
@@ -25,10 +26,14 @@ function fetchOriginalLink(keyword) {
     })
     .then(data => {
         if (data.success && data.originalLink) {
-            window.location.href = data.originalLink;
+            var isRefid = /^\d{6}$/.test(identifier);
+            var redirectUrl = isRefid 
+                ? (data.originalLink.includes('?') ? `${data.originalLink}&refid=${encodedIdentifier}` : `${data.originalLink}?refid=${encodedIdentifier}`)
+                : data.originalLink;
+            window.location.href = redirectUrl;
         } else {
-            console.error('Không tìm thấy liên kết gốc cho từ khóa:', keyword);
-            alert('Không tìm thấy liên kết gốc cho từ khóa.');
+            console.error('Không tìm thấy liên kết gốc cho từ khóa hoặc refid:', identifier);
+            alert('Không tìm thấy liên kết gốc cho từ khóa hoặc refid.');
         }
     })
     .catch(error => {
