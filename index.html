@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy keyword từ URL sau "https://apks2life.github.io/"
-    var keyword = window.location.pathname.replace('/','');
+    // Lấy keyword sau dấu ? trong URL
+    var keyword = new URLSearchParams(window.location.search).toString();
 
+    // Nếu tìm thấy keyword trong URL
     if (keyword) {
+        // Gọi hàm fetchOriginalLink với keyword đã trích xuất
         fetchOriginalLink(keyword);
     } else {
         console.error('Không có từ khóa trong URL.');
@@ -11,9 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchOriginalLink(keyword) {
-    var encodedKeyword = encodeURIComponent(keyword);
-
-    fetch(`https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeyword}`, {
+    // Gọi API để lấy link gốc
+    fetch(`https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${keyword}`, {
         method: 'GET',
         cache: 'no-cache'
     })
@@ -29,8 +30,8 @@ function fetchOriginalLink(keyword) {
             if (/^\d{6}$/.test(keyword)) {
                 // Thêm refid vào link gốc
                 var originalLinkWithKeyword = data.originalLink.includes('?') 
-                    ? `${data.originalLink}&refid=${encodedKeyword}`
-                    : `${data.originalLink}?refid=${encodedKeyword}`;
+                    ? `${data.originalLink}&refid=${keyword}`
+                    : `${data.originalLink}?refid=${keyword}`;
                 // Chuyển hướng đến link gốc với refid
                 window.location.href = originalLinkWithKeyword;
             } else {
