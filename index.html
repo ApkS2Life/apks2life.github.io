@@ -28,10 +28,10 @@ function fetchOriginalLink(keyword) {
                     ? `${data.originalLink}&refid=${encodedKeyword}`
                     : `${data.originalLink}?refid=${encodedKeyword}`;
                 // Chuyển hướng đến link gốc với refid
-                window.location.replace(originalLinkWithKeyword);
+                window.location.href = originalLinkWithKeyword;
             } else {
                 // Chuyển hướng đến link gốc mà không thêm refid
-                window.location.replace(data.originalLink);
+                window.location.href = data.originalLink;
             }
         } else {
             alert('Không tìm thấy liên kết gốc.');
