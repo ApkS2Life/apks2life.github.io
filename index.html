@@ -1,7 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy phần keyword từ URL sau dấu '?' 
-    var keyword = window.location.search.substring(1);
-
+    // Lấy keyword từ URL sau phần https://apks2life.github.io/
+    var keyword = window.location.href.split("https://apks2life.github.io")[1].trim();
+    
+    // Xóa dấu '/' nếu có
+    if (keyword.startsWith('/')) {
+        keyword = keyword.slice(1);
+    }
+    
     // Nếu tìm thấy keyword trong URL
     if (keyword) {
         // Gọi hàm fetchOriginalLink với keyword đã trích xuất
@@ -15,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function fetchOriginalLink(keyword) {
     // Mã hóa keyword để đảm bảo an toàn
     var encodedKeyword = encodeURIComponent(keyword);
-
+    
     // Gọi API để lấy link gốc
     fetch(`https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeyword}`, {
         method: 'GET',
