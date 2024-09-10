@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var queryString = window.location.search.substring(1);
 
     if (queryString) {
-        // Phân tích chuỗi truy vấn để lấy keyword hoặc refid
+        // Phân tích chuỗi truy vấn để lấy keyword và refid
         var params = new URLSearchParams(queryString);
         var keyword = params.get('keyword');
         var refid = params.get('refid');
@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchOriginalLink(keyword, refid) {
+    // Chuyển đổi và mã hóa keyword
     var encodedKeyword = encodeURIComponent(keyword);
 
     // Xây dựng URL với keyword
@@ -43,8 +44,9 @@ function fetchOriginalLink(keyword, refid) {
 
             // Nếu có refid, thêm nó vào URL gốc
             if (refid) {
+                var encodedRefid = encodeURIComponent(refid);
                 // Thêm refid vào URL gốc
-                redirectUrl += (redirectUrl.includes('?') ? '&' : '?') + `refid=${encodeURIComponent(refid)}`;
+                redirectUrl += (redirectUrl.includes('?') ? '&' : '?') + `refid=${encodedRefid}`;
             }
 
             // Chuyển hướng đến liên kết gốc với refid (nếu có)
