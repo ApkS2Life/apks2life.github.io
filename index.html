@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var queryString = window.location.search.substring(1);
 
     if (queryString) {
-        // Phân tích chuỗi truy vấn để lấy keyword và refid
+        // Phân tích chuỗi truy vấn để lấy keyword hoặc refid
         var params = new URLSearchParams(queryString);
         var keyword = params.get('keyword');
         var refid = params.get('refid');
@@ -41,17 +41,13 @@ function fetchOriginalLink(keyword, refid) {
         if (data.success && data.originalLink) {
             let redirectUrl = data.originalLink;
 
-            // Nếu có refid, thêm nó vào URL gốc dưới dạng query string
+            // Nếu có refid, thêm nó vào URL gốc
             if (refid) {
-                // Tạo URL object từ link gốc
-                const urlObject = new URL(data.originalLink);
-                // Thêm refid vào URL
-                urlObject.searchParams.set('refid', refid);
-                // Cập nhật URL để bao gồm refid
-                redirectUrl = urlObject.toString();
+                // Thêm refid vào URL gốc
+                redirectUrl += (redirectUrl.includes('?') ? '&' : '?') + `refid=${encodeURIComponent(refid)}`;
             }
 
-            // Chuyển hướng đến liên kết gốc đã được thêm refid (nếu có)
+            // Chuyển hướng đến liên kết gốc với refid (nếu có)
             window.location.href = redirectUrl;
         } else {
             console.error('Không tìm thấy liên kết gốc cho từ khóa:', keyword);
