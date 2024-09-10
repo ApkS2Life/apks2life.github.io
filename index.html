@@ -1,20 +1,30 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Lấy phần chuỗi truy vấn sau dấu '?' trong URL
-    var queryString = window.location.search.substring(1); 
+    var queryString = window.location.search.substring(1);
 
     if (queryString) {
-        fetchOriginalLink(queryString);
+        // Phân tích chuỗi truy vấn để lấy keyword hoặc refid
+        var params = new URLSearchParams(queryString);
+        var keyword = params.get('keyword');
+        var refid = params.get('refid');
+
+        if (keyword) {
+            fetchOriginalLink(keyword, refid);
+        } else {
+            console.error('Không có từ khóa trong URL.');
+            alert('Không có từ khóa trong URL.');
+        }
     } else {
-        console.error('Không có từ khóa hoặc refid trong URL.');
-        alert('Không có từ khóa hoặc refid trong URL.');
+        console.error('Không có chuỗi truy vấn trong URL.');
+        alert('Không có chuỗi truy vấn trong URL.');
     }
 });
 
-function fetchOriginalLink(keywordOrRefid) {
-    var encodedKeyword = encodeURIComponent(keywordOrRefid);
+function fetchOriginalLink(keyword, refid) {
+    var encodedKeyword = encodeURIComponent(keyword);
 
-    // Xây dựng URL với keyword hoặc refid
+    // Xây dựng URL với keyword
     var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeyword}`;
 
     fetch(url, {
@@ -29,23 +39,20 @@ function fetchOriginalLink(keywordOrRefid) {
     })
     .then(data => {
         if (data.success && data.originalLink) {
-            // Kiểm tra xem refid có trong query string không
-            const refidParam = new URLSearchParams(window.location.search).get('refid');
             let redirectUrl = data.originalLink;
 
             // Nếu có refid, thêm nó vào URL gốc
-            if (refidParam) {
-                // Thêm refid vào cuối URL dưới dạng query string
+            if (refid) {
                 const urlObject = new URL(data.originalLink);
-                urlObject.searchParams.append('refid', refidParam);
+                urlObject.searchParams.append('refid', refid);
                 redirectUrl = urlObject.toString();
             }
 
             // Chuyển hướng đến liên kết gốc với refid (nếu có)
             window.location.href = redirectUrl;
         } else {
-            console.error('Không tìm thấy liên kết gốc cho từ khóa hoặc refid:', keywordOrRefid);
-            alert('Không tìm thấy liên kết gốc cho từ khóa hoặc refid.');
+            console.error('Không tìm thấy liên kết gốc cho từ khóa:', keyword);
+            alert('Không tìm thấy liên kết gốc cho từ khóa.');
         }
     })
     .catch(error => {
