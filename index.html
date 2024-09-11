@@ -1,56 +1,41 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy phần sau dấu '?' trong URL
-    var queryString = window.location.search.substring(1);
+    // Lấy keyword hoặc refid từ URL
+    var keyword = new URLSearchParams(window.location.search).get('keyword') || new URLSearchParams(window.location.search).get('refid');
 
-    if (queryString) {
-        // Xác định nếu chuỗi truy vấn là keyword (chữ) hay refid (số)
-        var isRefid = /^[0-9]+$/.test(queryString); // Kiểm tra nếu chỉ chứa số
-        var keyword = isRefid ? null : queryString;
-        var refid = isRefid ? queryString : null;
-
-        fetchOriginalLink(keyword, refid); // Gọi API dựa trên giá trị refid hoặc keyword
+    if (keyword) {
+        fetchOriginalLink(keyword);
     } else {
-        console.error('Không có chuỗi truy vấn trong URL.');
-        alert('Không có chuỗi truy vấn trong URL.');
+        alert('Không có từ khóa hoặc refid trong URL.');
     }
 });
 
-function fetchOriginalLink(keyword, refid) {
-    // Chuẩn bị URL cho yêu cầu API
-    var apiUrl = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec`;
+function fetchOriginalLink(keyword) {
+    // Dùng toString để đảm bảo keyword được xử lý dưới dạng chuỗi
+    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${keyword.toString()}`;
 
-    // Nếu có keyword, mã hóa keyword, nếu không, không mã hóa refid
-    var queryParam = keyword ? `?keyword=${encodeURIComponent(keyword)}` : `?refid=${refid}`;
-
-    fetch(apiUrl + queryParam, {
+    fetch(url, {
         method: 'GET',
         cache: 'no-cache'
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Phản hồi từ mạng không hợp lệ');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         if (data.success && data.originalLink) {
-            let redirectUrl = data.originalLink;
+            var refid = new URLSearchParams(window.location.search).get('refid');
+            var finalLink = data.originalLink;
 
-            // Nếu có refid, thêm nó vào URL gốc mà không mã hóa
+            // Thêm refid vào link gốc nếu có refid
             if (refid) {
-                redirectUrl += (redirectUrl.includes('?') ? '&' : '?') + `refid=${refid}`;
+                finalLink += `?refid=${refid}`;
             }
 
-            // Chuyển hướng tới link gốc
-            window.location.href = redirectUrl;
+            // Chuyển hướng đến link gốc đã thêm refid
+            window.location.href = finalLink;
         } else {
-            console.error('Không tìm thấy liên kết gốc cho từ khóa hoặc refid:', keyword || refid);
             alert('Không tìm thấy liên kết gốc cho từ khóa hoặc refid.');
         }
     })
     .catch(error => {
-        console.error('Lỗi Fetch:', error.message);
         alert('Đã xảy ra lỗi khi lấy liên kết gốc.');
     });
 }
