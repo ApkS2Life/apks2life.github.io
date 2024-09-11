@@ -20,8 +20,8 @@ function fetchOriginalLink(keyword, refid) {
     // Chuẩn bị URL cho yêu cầu API
     var apiUrl = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec`;
 
-    // Nếu có keyword, gửi keyword; nếu không, gửi refid
-    var queryParam = keyword ? `?keyword=${encodeURIComponent(keyword)}` : `?refid=${encodeURIComponent(refid)}`;
+    // Nếu có keyword, mã hóa keyword, nếu không, không mã hóa refid
+    var queryParam = keyword ? `?keyword=${encodeURIComponent(keyword)}` : `?refid=${refid}`;
 
     fetch(apiUrl + queryParam, {
         method: 'GET',
@@ -37,10 +37,9 @@ function fetchOriginalLink(keyword, refid) {
         if (data.success && data.originalLink) {
             let redirectUrl = data.originalLink;
 
-            // Nếu có refid, thêm nó vào URL gốc
+            // Nếu có refid, thêm nó vào URL gốc mà không mã hóa
             if (refid) {
-                var encodedRefid = encodeURIComponent(refid);
-                redirectUrl += (redirectUrl.includes('?') ? '&' : '?') + `refid=${encodedRefid}`;
+                redirectUrl += (redirectUrl.includes('?') ? '&' : '?') + `refid=${refid}`;
             }
 
             // Chuyển hướng tới link gốc
