@@ -49,8 +49,14 @@ function fetchOriginalLink(keyword, refid) {
                 redirectUrl += (redirectUrl.includes('?') ? '&' : '?') + `refid=${encodedRefid}`;
             }
 
-            // Chuyển hướng đến liên kết gốc với refid (nếu có)
-            window.location.href = redirectUrl;
+            // Sử dụng history.pushState để cập nhật URL mà không cần reload trang
+            window.history.pushState({}, '', redirectUrl);
+
+            // Hiển thị thông báo với URL mới (sau khi đã thêm refid)
+            console.log('Link gốc với refid:', redirectUrl);
+
+            // Tùy chọn: Nếu muốn tự động chuyển hướng sau khi gắn refid
+            // window.location.href = redirectUrl;
         } else {
             console.error('Không tìm thấy liên kết gốc cho từ khóa:', keyword);
             alert('Không tìm thấy liên kết gốc cho từ khóa.');
