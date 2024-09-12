@@ -1,4 +1,24 @@
 <script>
+// Hàm để mã hóa keyword (refid không cần mã hóa)
+function encodeKeyword(keywordOrRefid) {
+    // Nếu là refid (số), không mã hóa
+    if (!isNaN(keywordOrRefid)) {
+        return keywordOrRefid;
+    } 
+    // Mã hóa nếu là keyword
+    return encodeURIComponent(keywordOrRefid);
+}
+
+// Hàm để giải mã keyword
+function decodeKeyword(keywordOrRefid) {
+    // Nếu là refid (số), không cần giải mã
+    if (!isNaN(keywordOrRefid)) {
+        return keywordOrRefid;
+    }
+    // Giải mã nếu là keyword
+    return decodeURIComponent(keywordOrRefid);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Lấy phần sau dấu '?' trong URL (keyword hoặc refid)
     var fullUrl = window.location.href;
@@ -7,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Kiểm tra nếu có keyword hoặc refid
     if (keywordOrRefid) {
         // Gọi hàm fetch để lấy link gốc
-        fetchOriginalLink(keywordOrRefid);
+        fetchOriginalLink(decodeKeyword(keywordOrRefid));
     } else {
         console.error('Không có từ khóa hoặc refid trong URL.');
         alert('Không có từ khóa hoặc refid trong URL.');
@@ -15,8 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchOriginalLink(keywordOrRefid) {
-    // Xây dựng URL gọi đến Apps Script
-    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${keywordOrRefid}`;
+    // Xây dựng URL gọi đến Apps Script, mã hóa keyword nếu cần
+    var encodedKeywordOrRefid = encodeKeyword(keywordOrRefid);
+    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeywordOrRefid}`;
 
     fetch(url, {
         method: 'GET',
