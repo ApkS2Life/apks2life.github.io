@@ -2,8 +2,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Lấy keyword hoặc refid từ URL
     var params = new URLSearchParams(window.location.search);
-    var keyword = params.get('') || params.get('keyword');
-    var refid = params.get('') || params.get('refid');
+    var keyword = params.get('') || '';  // Lấy từ khóa từ sau dấu ?
+    var refid = '';
+
+    // Kiểm tra nếu keyword là số thì đó là refid
+    if (!isNaN(keyword) && keyword !== '') {
+        refid = keyword;  // Nếu keyword là số, gán vào refid
+    }
 
     if (keyword) {
         fetchOriginalLink(keyword, refid);
@@ -13,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchOriginalLink(keyword, refid) {
-    // Xây dựng URL để gửi keyword tới Apps Script
+    // Xây dựng URL gửi request đến Apps Script
     var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${keyword}`;
 
     fetch(url, {
