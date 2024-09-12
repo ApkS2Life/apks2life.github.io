@@ -1,18 +1,20 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Lấy keyword hoặc refid từ URL
-    var keyword = new URLSearchParams(window.location.search).get('keyword') || new URLSearchParams(window.location.search).get('refid');
+    var params = new URLSearchParams(window.location.search);
+    var keyword = params.get('') || params.get('keyword');
+    var refid = params.get('') || params.get('refid');
 
     if (keyword) {
-        fetchOriginalLink(keyword);
+        fetchOriginalLink(keyword, refid);
     } else {
         alert('Không có từ khóa hoặc refid trong URL.');
     }
 });
 
-function fetchOriginalLink(keyword) {
-    // Dùng toString để đảm bảo keyword được xử lý dưới dạng chuỗi
-    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${keyword.toString()}`;
+function fetchOriginalLink(keyword, refid) {
+    // Xây dựng URL để gửi keyword tới Apps Script
+    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${keyword}`;
 
     fetch(url, {
         method: 'GET',
@@ -21,15 +23,14 @@ function fetchOriginalLink(keyword) {
     .then(response => response.json())
     .then(data => {
         if (data.success && data.originalLink) {
-            var refid = new URLSearchParams(window.location.search).get('refid');
             var finalLink = data.originalLink;
 
-            // Thêm refid vào link gốc nếu có refid
+            // Thêm refid vào liên kết gốc nếu có
             if (refid) {
                 finalLink += `?refid=${refid}`;
             }
 
-            // Chuyển hướng đến link gốc đã thêm refid
+            // Chuyển hướng tới liên kết gốc với refid
             window.location.href = finalLink;
         } else {
             alert('Không tìm thấy liên kết gốc cho từ khóa hoặc refid.');
