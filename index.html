@@ -1,25 +1,25 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Lấy keyword hoặc refid từ URL
-    var params = new URLSearchParams(window.location.search);
-    var keyword = params.get('') || '';  // Lấy từ khóa từ sau dấu ?
-    var refid = '';
+    // Lấy phần keyword hoặc refid từ URL sau dấu '?'
+    var fullUrl = window.location.href;
+    var keywordOrRefid = fullUrl.split('?')[1]; // Lấy phần sau dấu '?'
+    
+    if (keywordOrRefid) {
+        // Xác định nếu keywordOrRefid là số, nó là refid, nếu không thì là keyword
+        var refid = !isNaN(keywordOrRefid) ? keywordOrRefid : ''; // refid nếu là số
+        var keyword = isNaN(keywordOrRefid) ? keywordOrRefid : ''; // keyword nếu không phải số
 
-    // Kiểm tra nếu keyword là số thì đó là refid
-    if (!isNaN(keyword) && keyword !== '') {
-        refid = keyword;  // Nếu keyword là số, gán vào refid
-    }
-
-    if (keyword) {
-        fetchOriginalLink(keyword, refid);
+        // Gọi hàm xử lý fetch link gốc
+        fetchOriginalLink(keywordOrRefid, refid);
     } else {
+        console.error('Không có từ khóa hoặc refid trong URL.');
         alert('Không có từ khóa hoặc refid trong URL.');
     }
 });
 
-function fetchOriginalLink(keyword, refid) {
-    // Xây dựng URL gửi request đến Apps Script
-    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${keyword}`;
+function fetchOriginalLink(keywordOrRefid, refid) {
+    // Xây dựng URL để gửi yêu cầu đến Apps Script, không cần phân biệt keyword/refid
+    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${keywordOrRefid}`;
 
     fetch(url, {
         method: 'GET',
@@ -30,18 +30,20 @@ function fetchOriginalLink(keyword, refid) {
         if (data.success && data.originalLink) {
             var finalLink = data.originalLink;
 
-            // Thêm refid vào liên kết gốc nếu có
+            // Thêm refid vào liên kết gốc nếu có refid
             if (refid) {
                 finalLink += `?refid=${refid}`;
             }
 
-            // Chuyển hướng tới liên kết gốc với refid
+            // Chuyển hướng đến liên kết gốc với refid (nếu có)
             window.location.href = finalLink;
         } else {
+            console.error('Không tìm thấy liên kết gốc cho từ khóa hoặc refid:', keywordOrRefid);
             alert('Không tìm thấy liên kết gốc cho từ khóa hoặc refid.');
         }
     })
     .catch(error => {
+        console.error('Lỗi Fetch:', error.message);
         alert('Đã xảy ra lỗi khi lấy liên kết gốc.');
     });
 }
