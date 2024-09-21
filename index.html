@@ -22,7 +22,8 @@ function decodeKeyword(keywordOrRefid) {
 document.addEventListener('DOMContentLoaded', function() {
     // Lấy phần sau dấu '?' trong URL (keyword hoặc refid)
     var fullUrl = window.location.href;
-    var keywordOrRefid = fullUrl.split('?')[1]; // Lấy chuỗi sau dấu '?'
+    var queryString = fullUrl.split('?')[1];
+    var keywordOrRefid = queryString ? queryString.split('&')[0] : null;
 
     // Kiểm tra nếu có keyword hoặc refid
     if (keywordOrRefid) {
