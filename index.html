@@ -1,9 +1,10 @@
+<script>
 // Hàm để mã hóa keyword (refid không cần mã hóa)
 function encodeKeyword(keywordOrRefid) {
     // Nếu là refid (số), không mã hóa
     if (!isNaN(keywordOrRefid)) {
         return keywordOrRefid;
-    } 
+    }
     // Mã hóa nếu là keyword
     return encodeURIComponent(keywordOrRefid);
 }
@@ -18,22 +19,46 @@ function decodeKeyword(keywordOrRefid) {
     return decodeURIComponent(keywordOrRefid);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Lấy phần sau dấu '/' trong URL (keyword hoặc refid)
-    var pathParts = window.location.pathname.split('/');
-    var keywordOrRefid = pathParts[pathParts.length - 1]; 
+document.addEventListener('DOMContentLoaded', function () {
+    // Kiểm tra kết nối mạng
+    if (!navigator.onLine) {
+        displayErrorMessage('Không có kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
+        return;
+    }
+
+    // Lấy toàn bộ phần sau dấu '?' trong URL
+    var queryString = window.location.search.substring(1);
+
+    // Tìm vị trí của dấu '&' đầu tiên
+    var ampersandIndex = queryString.indexOf('&');
+
+    // Nếu có dấu '&', cắt chuỗi từ đầu đến trước dấu '&'
+    if (ampersandIndex !== -1) {
+        queryString = queryString.substring(0, ampersandIndex);
+    }
+
+    // Tách các tham số trong query string (nếu có)
+    var params = queryString.split('&');
+
+    // Tìm tham số có tên là 'keyword'
+    var keywordParam = params.find(param => param.startsWith('keyword='));
+
+    var keywordOrRefid;
+
+    if (keywordParam) {
+        // Lấy giá trị của keyword sau dấu '='
+        keywordOrRefid = keywordParam.split('=')[1];
+    } else if (queryString) {
+        // Nếu không có keywordParam nhưng có queryString, coi đó là keywordOrRefid
+        keywordOrRefid = queryString;
+    }
 
     // Kiểm tra nếu có keyword hoặc refid
     if (keywordOrRefid) {
         // Gọi hàm fetch để lấy link gốc
         fetchOriginalLink(decodeKeyword(keywordOrRefid));
-    } else {
-        // Nếu không có keyword hoặc refid, có thể đây là trang chủ hoặc trang giới thiệu công cụ
-        // Bạn có thể hiển thị nội dung phù hợp ở đây
-        console.log('Đây có thể là trang chủ hoặc trang giới thiệu công cụ'); 
-        // Ví dụ: hiển thị form nhập liệu để tạo link rút gọn
-        displayShortenLinkForm(); 
     }
+    // Không cần hiển thị form tạo link rút gọn nếu không có keyword hoặc refid
 });
 
 function fetchOriginalLink(keywordOrRefid) {
@@ -45,30 +70,49 @@ function fetchOriginalLink(keywordOrRefid) {
         method: 'GET',
         cache: 'no-cache'
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Phản hồi từ mạng không hợp lệ');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success && data.originalLink) {
-            var finalLink = data.originalLink;
-
-            // Nếu keyword là số (refid), thêm refid vào link gốc
-            if (!isNaN(keywordOrRefid)) {
-                finalLink += `?refid=${keywordOrRefid}`;
+        .then(response => {
+            if (!response.ok) {
+                // Phân biệt các loại lỗi và hiển thị thông báo cụ thể
+                if (response.status === 404) {
+                    throw new Error('Không tìm thấy liên kết gốc. Vui lòng kiểm tra lại keyword hoặc refid.');
+                } else if (response.status === 500) {
+                    throw new Error('Lỗi server. Vui lòng thử lại sau hoặc liên hệ với quản trị viên.');
+                } else {
+                    throw new Error('Đã xảy ra lỗi khi lấy liên kết gốc. Vui lòng thử lại sau.');
+                }
             }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.originalLink) {
+                var finalLink = data.originalLink;
 
-            // Chuyển hướng đến link gốc với refid (nếu có)
-            window.location.href = finalLink;
-        } else {
-            console.error('Không tìm thấy liên kết gốc cho từ khóa hoặc refid:', keywordOrRefid);
-            alert('Không tìm thấy liên kết gốc cho từ khóa hoặc refid.');
-        }
-    })
-    .catch(error => {
-        console.error('Lỗi Fetch:', error.message);
-        alert('Đã xảy ra lỗi khi lấy liên kết gốc.');
-    });
+                // Nếu keyword là số (refid), thêm refid vào link gốc
+                if (!isNaN(keywordOrRefid)) {
+                    finalLink += `?refid=${keywordOrRefid}`;
+                }
+
+                // Chuyển hướng đến link gốc với refid (nếu có)
+                window.location.href = finalLink;
+            } else {
+                displayErrorMessage('Không tìm thấy liên kết gốc cho từ khóa hoặc refid đã cung cấp.');
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi Fetch:', error.message);
+            displayErrorMessage(error.message);
+        });
 }
+
+// Hàm để hiển thị thông báo lỗi
+function displayErrorMessage(message) {
+    var errorContainer = document.getElementById('error-container');
+    if (!errorContainer) {
+        errorContainer = document.createElement('div');
+        errorContainer.id = 'error-container';
+        errorContainer.style.color = 'red';
+        document.body.appendChild(errorContainer);
+    }
+    errorContainer.textContent = message;
+}
+</script>
