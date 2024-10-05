@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function fetchOriginalLink(keywordOrRefid) {
     // Xây dựng URL gọi đến Apps Script, mã hóa keyword nếu cần
     var encodedKeywordOrRefid = encodeKeyword(keywordOrRefid);
-    var url = `https://script.google.com/macros/s/AKfycbwJgR1iLkDU-Hly1MHRR4kfUFpkmm27kE9bxwxEMFg0_UpV_moIIhSjR1sWLcNXcIR9bg/exec?keyword=${encodedKeywordOrRefid}`;
+    var url = `https://script.google.com/macros/s/AKfycbxL7lGHd25j9xqCXL5cjGZRHzP4vQCJdq2KCGpYEtNJDGVWI-BIKffSU2cYZ9qZiSp-8g/exec?action=redirectShortLink&keyword=${encodedKeywordOrRefid}`;
 
     fetch(url, {
         method: 'GET',
