@@ -69,37 +69,29 @@
                     return response.json();
                 })
                 .then(data => {
-            if (data.success && data.originalLink) {
-                var finalLink = data.originalLink;
+                    if (data.success && data.originalLink) {
+                        window.location.href = data.originalLink;
+                    } else {
+                        displayErrorMessage('Không tìm thấy liên kết gốc cho từ khóa hoặc refid đã cung cấp.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi Fetch:', error.message);
+                    displayErrorMessage(error.message);
+                });
+        }
 
-                // Nếu keyword là số (refid), thêm refid vào link gốc
-                if (!isNaN(keywordOrRefid)) {
-                    finalLink += `?refid=${keywordOrRefid}`;
-                }
-
-                // Chuyển hướng đến link gốc với refid (nếu có)
-                window.location.href = finalLink;
-            } else {
-                displayErrorMessage('Không tìm thấy liên kết gốc cho từ khóa hoặc refid đã cung cấp.');
+        // Hàm để hiển thị thông báo lỗi
+        function displayErrorMessage(message) {
+            var errorContainer = document.getElementById('error-container');
+            if (!errorContainer) {
+                errorContainer = document.createElement('div');
+                errorContainer.id = 'error-container';
+                errorContainer.style.color = 'red';
+                document.body.appendChild(errorContainer);
             }
-        })
-        .catch(error => {
-            console.error('Lỗi Fetch:', error.message);
-            displayErrorMessage(error.message);
-        });
-}
-
-// Hàm để hiển thị thông báo lỗi
-function displayErrorMessage(message) {
-    var errorContainer = document.getElementById('error-container');
-    if (!errorContainer) {
-        errorContainer = document.createElement('div');
-        errorContainer.id = 'error-container';
-        errorContainer.style.color = 'red';
-        document.body.appendChild(errorContainer);
-    }
-    errorContainer.textContent = message;
-}
-</script>
+            errorContainer.textContent = message;
+        }
+    </script>
 </body>
 </html>
