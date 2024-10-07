@@ -7,25 +7,6 @@
 </head>
 <body>
     <script>
-    function encodeKeyword(keywordOrRefid) {
-    // Nếu là refid (số), không mã hóa
-    if (!isNaN(keywordOrRefid)) {
-        return keywordOrRefid;
-    }
-    // Mã hóa nếu là keyword
-    return encodeURIComponent(keywordOrRefid);
-}
-
-// Hàm để giải mã keyword
-function decodeKeyword(keywordOrRefid) {
-    // Nếu là refid (số), không cần giải mã
-    if (!isNaN(keywordOrRefid)) {
-        return keywordOrRefid;
-    }
-    // Giải mã nếu là keyword
-    return decodeURIComponent(keywordOrRefid);
-}
-
         document.addEventListener('DOMContentLoaded', function () {
             // Kiểm tra kết nối mạng
             if (!navigator.onLine) {
