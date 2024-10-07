@@ -15,7 +15,7 @@
             }
 
             // Lấy toàn bộ phần sau dấu '?' trong URL
-            var keyword = window.location.search.substring(1); // Đổi queryString thành keyword
+            var keyword = window.location.search.substring(1);
 
             // Kiểm tra nếu có keyword hoặc refid
             if (keyword) {
@@ -25,15 +25,15 @@
             // Không cần hiển thị form tạo link rút gọn nếu không có keyword hoặc refid
         });
 
-        function fetchOriginalLink(keywordOrRefid) {
+        function fetchOriginalLink(keyword) {
             // Kiểm tra kết nối mạng
             if (!navigator.onLine) {
                 displayErrorMessage('Không có kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
                 return;
             }
 
-            // Xây dựng URL gọi đến Apps Script, mã hóa keyword nếu cần
-            var url = `https://script.google.com/macros/s/AKfycbxL7lGHd25j9xqCXL5cjGZRHzP4vQCJdq2KCGpYEtNJDGVWI-BIKffSU2cYZ9qZiSp-8g/exec?action=redirectShortLink&keyword=${encodeURIComponent(keywordOrRefid)}`; // Gửi keyword
+            // Xây dựng URL gọi đến Apps Script
+            var url = `https://script.google.com/macros/s/AKfycbxL7lGHd25j9xqCXL5cjGZRHzP4vQCJdq2KCGpYEtNJDGVWI-BIKffSU2cYZ9qZiSp-8g/exec?action=redirectShortLink&keyword=${keyword}`; // Không mã hóa keyword
 
             fetch(url, {
                 method: 'GET',
