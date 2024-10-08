@@ -70,6 +70,14 @@
                 })
                 .then(data => {
                     if (data.success && data.originalLink) {
+                        // Lấy refid từ URL hiện tại
+                        var refid = new URLSearchParams(window.location.search).get('refid');
+
+                        // Thêm refid vào link gốc nếu có
+                        if (refid) {
+                            data.originalLink += `?refid=${refid}`;
+                        }
+
                         window.location.href = data.originalLink;
                     } else {
                         displayErrorMessage('Không tìm thấy liên kết gốc cho từ khóa hoặc refid đã cung cấp.');
