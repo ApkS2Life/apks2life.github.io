@@ -7,91 +7,91 @@
 </head>
 <body>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Kiểm tra kết nối mạng
+        // Function to handle redirection
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for network connection
             if (!navigator.onLine) {
                 displayErrorMessage('Không có kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
                 return;
             }
 
-            // Lấy toàn bộ phần sau dấu '?' trong URL
-            var queryString = window.location.search.substring(1);
+            // Extract keyword or refid from URL
+            const queryString = window.location.search.substring(1); 
 
-            // Tách các tham số trong query string (nếu có)
-            var params = queryString.split('&');
-
-            // Tìm tham số có tên là 'keyword'
-            var keywordParam = params.find(param => param.startsWith('keyword='));
-
-            var keywordOrRefid;
-
-            if (keywordParam) {
-                // Lấy giá trị của keyword sau dấu '='
-                keywordOrRefid = keywordParam.split('=')[1];
-            } else if (queryString) {
-                // Nếu không có keywordParam nhưng có queryString, coi đó là keywordOrRefid
-                keywordOrRefid = queryString;
+            // Function to extract keyword or refid from URL
+            function extractKeywordOrRefid(queryString) {
+                if (queryString) {
+                    // If query string is a number, it's refid
+                    if (!isNaN(parseInt(queryString))) {
+                        return {
+                            keyword: null,
+                            refid: queryString
+                        };
+                    } else {
+                        return {
+                            keyword: queryString,
+                            refid: null
+                        };
+                    }
+                }
+                return {
+                    keyword: null,
+                    refid: null
+                };
             }
 
-            // Kiểm tra nếu có keyword hoặc refid
-            if (keywordOrRefid) {
-                // Gọi hàm fetch để lấy link gốc
-                fetchOriginalLink(keywordOrRefid);
+            const { keyword, refid } = extractKeywordOrRefid(queryString); 
+
+            // Fetch original URL from GAS script
+            if (keyword || refid) {
+                fetchOriginalLink(keyword, refid);
             }
-            // Không cần hiển thị form tạo link rút gọn nếu không có keyword hoặc refid
         });
 
-        function fetchOriginalLink(keywordOrRefid) {
-            // Kiểm tra kết nối mạng
+        // Fetch original URL based on keyword/refid
+        async function fetchOriginalLink(keyword, refid) {
+            // Check for network connection
             if (!navigator.onLine) {
                 displayErrorMessage('Không có kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
                 return;
             }
 
-            // Xây dựng URL gọi đến Apps Script, mã hóa keyword nếu cần
-            var url = `https://script.google.com/macros/s/AKfycbxL7lGHd25j9xqCXL5cjGZRHzP4vQCJdq2KCGpYEtNJDGVWI-BIKffSU2cYZ9qZiSp-8g/exec?action=redirectShortLink&keyword=${encodeURIComponent(keywordOrRefid)}`;
+            let url = `https://script.google.com/macros/s/AKfycbxL7lGHd25j9xqCXL5cjGZRHzP4vQCJdq2KCGpYEtNJDGVWI-BIKffSU2cYZ9qZiSp-8g/exec?action=redirectShortLink`;
 
-            fetch(url, {
-                method: 'GET',
-                cache: 'no-cache'
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        // Phân biệt các loại lỗi và hiển thị thông báo cụ thể
-                        if (response.status === 404) {
-                            throw new Error('Không tìm thấy liên kết gốc. Vui lòng kiểm tra lại keyword hoặc refid.');
-                        } else if (response.status === 500) {
-                            throw new Error('Lỗi server. Vui lòng thử lại sau hoặc liên hệ với quản trị viên.');
-                        } else {
-                            throw new Error('Đã xảy ra lỗi khi lấy liên kết gốc. Vui lòng thử lại sau.');
-                        }
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success && data.originalLink) {
-                        // Lấy refid từ URL hiện tại
-                        var refid = new URLSearchParams(window.location.search).get('refid');
+            if (keyword) {
+                url += `&keyword=${encodeURIComponent(keyword)}`;
+            } else if (refid) {
+                url += `&refid=${encodeURIComponent(refid)}`;
+            }
 
-                        // Thêm refid vào link gốc nếu có
-                        if (refid) {
-                            data.originalLink += `?refid=${refid}`;
-                        }
-
-                        window.location.href = data.originalLink;
-                    } else {
-                        displayErrorMessage('Không tìm thấy liên kết gốc cho từ khóa hoặc refid đã cung cấp.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Lỗi Fetch:', error.message);
-                    displayErrorMessage(error.message);
+            try {
+                // Send request to GAS script
+                const response = await fetch(url, {
+                    method: 'GET',
+                    cache: 'no-cache'
                 });
+                const data = await response.json();
+
+                // Handle success or error
+                if (data.success && data.originalLink) {
+                    // Add refid to original URL
+                    if (refid) {
+                        data.originalLink += `?refid=${refid}`;
+                    }
+                    // Redirect to original URL
+                    window.location.href = data.originalLink;
+                } else {
+                    displayErrorMessage('Không tìm thấy liên kết gốc cho từ khóa hoặc refid đã cung cấp.');
+                }
+            } catch (error) {
+                console.error('Lỗi Fetch:', error.message);
+                displayErrorMessage(error.message);
+            }
         }
 
-        // Hàm để hiển thị thông báo lỗi
+        // Function to display error message
         function displayErrorMessage(message) {
-            var errorContainer = document.getElementById('error-container');
+            let errorContainer = document.getElementById('error-container');
             if (!errorContainer) {
                 errorContainer = document.createElement('div');
                 errorContainer.id = 'error-container';
