@@ -1,60 +1,61 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đang chuyển hướng...</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đang chuyển hướng...</title>
 </head>
 <body>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const keyword = getKeywordFromURL(); // Lấy keyword từ URL
-      if (keyword) {
-        fetchOriginalLink(keyword);
-      }
-    });
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!navigator.onLine) {
+                displayErrorMessage('Không có kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
+                return;
+            }
 
-    async function fetchOriginalLink(keyword) {
-      try {
-        const response = await fetch(`https://script.google.com/macros/s/AKfycbwIc5UgvUdJ200H3JBfar3262DvQ9R57npNVbS8YeICiQ3lo96A-gugNd7Y91rLxKZyBQ/exec?action=redirectShortLink&keyword=${keyword}`);
-        const data = await response.json();
+            const keyword = window.location.search.substring(1);
 
-        if (data.success && data.originalLink) {
-          window.location.href = data.originalLink;
-        } else {
-          displayErrorMessage('Không tìm thấy liên kết gốc cho từ khóa đã cung cấp.');
+            if (keyword) {
+                fetchOriginalLink(keyword);
+            }
+        });
+
+        async function fetchOriginalLink(keyword) {
+            if (!navigator.onLine) {
+                displayErrorMessage('Không có kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
+                return;
+            }
+
+            let url = `https://script.google.com/macros/s/AKfycbwIc5UgvUdJ200H3JBfar3262DvQ9R57npNVbS8YeICiQ3lo96A-gugNd7Y91rLxKZyBQ/exec?action=redirectShortLink&keyword=${keyword}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    cache: 'no-cache'
+                });
+                const data = await response.json();
+
+                if (data.success && data.originalLink) {
+                    window.location.href = data.originalLink;
+                } else {
+                    displayErrorMessage(data.error || 'Không tìm thấy liên kết gốc cho từ khóa hoặc refid đã cung cấp.');
+                }
+            } catch (error) {
+                console.error('Lỗi Fetch:', error.message);
+                displayErrorMessage(error.message);
+            }
         }
-      } catch (error) {
-        console.error('Lỗi Fetch:', error);
-        displayErrorMessage('Đã xảy ra lỗi khi lấy liên kết gốc.');
-      }
-    }
 
-    function getKeywordFromURL() {
-      // Lấy phần path của URL
-      const pathname = window.location.pathname;
-      
-      // Loại bỏ phần đầu của path
-      let keyword = pathname.substring(1);
-      
-      // Loại bỏ dấu ? nếu có
-      if (keyword.startsWith("?")) {
-        keyword = keyword.substring(1);
-      }
-      
-      return keyword;
-    }
-
-    function displayErrorMessage(message) {
-      let errorContainer = document.getElementById('error-container');
-      if (!errorContainer) {
-        errorContainer = document.createElement('div');
-        errorContainer.id = 'error-container';
-        errorContainer.style.color = 'red';
-        document.body.appendChild(errorContainer);
-      }
-      errorContainer.textContent = message;
-    }
-  </script>
+        function displayErrorMessage(message) {
+            let errorContainer = document.getElementById('error-container');
+            if (!errorContainer) {
+                errorContainer = document.createElement('div');
+                errorContainer.id = 'error-container';
+                errorContainer.style.color = 'red';
+                document.body.appendChild(errorContainer);
+            }
+            errorContainer.textContent = message;
+        }
+    </script>
 </body>
 </html>
