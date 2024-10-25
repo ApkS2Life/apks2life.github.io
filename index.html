@@ -34,27 +34,41 @@
                 displayErrorMessage('Không có kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
                 return;
             }
-            
+
             // Lấy giá trị keyword từ input hidden
             const keywordInput = document.getElementById('keyword').value;
 
             let url = `https://script.google.com/macros/s/AKfycbwIc5UgvUdJ200H3JBfar3262DvQ9R57npNVbS8YeICiQ3lo96A-gugNd7Y91rLxKZyBQ/exec?action=redirectShortLink&keyword=${keywordInput}`;
+            console.log("URL gửi đi:", url);
 
             try {
                 const response = await fetch(url, {
                     method: 'GET',
                     cache: 'no-cache'
                 });
-                const data = await response.json();
+                
+                // Kiểm tra response có phải JSON hợp lệ
+                response.text().then(text => {
+                    try {
+                        console.log("Response nhận được:", text);
+                        const data = JSON.parse(text);
 
-                if (data.success && data.originalLink) {
-                    window.location.href = data.originalLink; 
-                } else {
-                    displayErrorMessage(data.error || 'Không tìm thấy liên kết gốc cho từ khóa hoặc refid đã cung cấp.');
-                }
+                        if (data.success && data.originalLink) {
+                            console.log("Original Link:", data.originalLink); 
+                            window.location.href = JSON.parse(data.originalLink);
+                        } else {
+                            displayErrorMessage(data.error || 'Không tìm thấy liên kết gốc.');
+                        }
+                    } catch (e) {
+                        console.error("Lỗi khi phân tích JSON:", e);
+                        console.error("Nội dung response:", text);
+                        displayErrorMessage('Lỗi khi lấy dữ liệu.');
+                    }
+                });
+
             } catch (error) {
-                console.error('Lỗi Fetch:', error.message);
-                displayErrorMessage(error.message);
+                console.error('Lỗi Fetch:', error);
+                displayErrorMessage('Lỗi khi kết nối đến máy chủ.'); 
             }
         }
 
