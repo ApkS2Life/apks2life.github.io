@@ -6,6 +6,7 @@
     <title>Đang chuyển hướng...</title>
 </head>
 <body>
+    <input type="hidden" id="keyword" name="keyword">
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (!navigator.onLine) {
@@ -13,11 +14,19 @@
                 return;
             }
 
-            const keyword = window.location.search.substring(1); 
-
-            if (keyword) {
-                fetchOriginalLink(keyword);
+            // Lấy giá trị keyword từ URL
+            const url = new URL(window.location.href);
+            const pathSegments = url.pathname.split('/');
+            let keyword = '';
+            if (pathSegments.length > 1) {
+                keyword = pathSegments[1];
             }
+
+            // Gán giá trị keyword vào input hidden
+            document.getElementById('keyword').value = keyword;
+
+            // Gọi fetchOriginalLink với giá trị keyword từ input
+            fetchOriginalLink(keyword);
         });
 
         async function fetchOriginalLink(keyword) {
@@ -25,8 +34,11 @@
                 displayErrorMessage('Không có kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
                 return;
             }
+            
+            // Lấy giá trị keyword từ input hidden
+            const keywordInput = document.getElementById('keyword').value;
 
-            let url = `https://script.google.com/macros/s/AKfycbwIc5UgvUdJ200H3JBfar3262DvQ9R57npNVbS8YeICiQ3lo96A-gugNd7Y91rLxKZyBQ/exec?action=redirectShortLink&keyword=${keyword}`;
+            let url = `https://script.google.com/macros/s/AKfycbwIc5UgvUdJ200H3JBfar3262DvQ9R57npNVbS8YeICiQ3lo96A-gugNd7Y91rLxKZyBQ/exec?action=redirectShortLink&keyword=${keywordInput}`;
 
             try {
                 const response = await fetch(url, {
