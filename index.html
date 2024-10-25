@@ -7,79 +7,45 @@
 </head>
 <body>
     <script>
-        // Function to handle redirection
         document.addEventListener('DOMContentLoaded', () => {
-            // Check for network connection
             if (!navigator.onLine) {
                 displayErrorMessage('Không có kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
                 return;
             }
 
-            // Extract keyword or refid from URL
-            const queryString = window.location.search.substring(1); 
+            const keyword = window.location.search.substring(1); // Lấy keyword (hoặc refID) trực tiếp
 
-            // Function to extract keyword or refid from URL
-            function extractKeywordOrRefid(queryString) {
-                if (queryString) {
-                    // If query string is a number, it's refid
-                    if (!isNaN(parseInt(queryString))) {
-                        return {
-                            keyword: null,
-                            refid: queryString
-                        };
-                    } else {
-                        return {
-                            keyword: queryString,
-                            refid: null
-                        };
-                    }
-                }
-                return {
-                    keyword: null,
-                    refid: null
-                };
-            }
-
-            const { keyword, refid } = extractKeywordOrRefid(queryString); 
-
-            // Fetch original URL from GAS script
-            if (keyword || refid) {
-                fetchOriginalLink(keyword, refid);
+            if (keyword) {
+                fetchOriginalLink(keyword);
             }
         });
 
-        // Fetch original URL based on keyword/refid
-        async function fetchOriginalLink(keyword, refid) {
-            // Check for network connection
+        async function fetchOriginalLink(keyword) {
             if (!navigator.onLine) {
                 displayErrorMessage('Không có kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
                 return;
             }
 
-            let url = `https://script.google.com/macros/s/AKfycbyX721LX_eGLGRHM1yuxf05KmkK5vDH2B--Ktb2MuKm24kyhT-QrbdGVoNhXPsTKDIHtw/exec?action=redirectShortLink`;
+            let url = `https://script.google.com/macros/s/AKfycbwIc5UgvUdJ200H3JBfar3262DvQ9R57npNVbS8YeICiQ3lo96A-gugNd7Y91rLxKZyBQ/exec?action=redirectShortLink`;
 
             if (keyword) {
                 url += `&keyword=${encodeURIComponent(keyword)}`;
-            } else if (refid) {
-                url += `&refid=${encodeURIComponent(refid)}`;
             }
 
             try {
-                // Send request to GAS script
                 const response = await fetch(url, {
                     method: 'GET',
                     cache: 'no-cache'
                 });
                 const data = await response.json();
 
-                // Handle success or error
                 if (data.success && data.originalLink) {
-                    // Add refid to original URL
-                    if (refid) {
-                        data.originalLink += `?refid=${refid}`;
+                    // Kiểm tra xem keyword có phải là refID (6 ký tự) hay không
+                    if (keyword.length === 6) { // Kiểm tra độ dài 
+                        // Gắn refID vào originalLink
+                        data.originalLink += (data.originalLink.includes('?') ? '&' : '?') + 'refid=' + keyword;
                     }
-                    // Redirect to original URL
-                    window.location.href = data.originalLink;
+                    window.location.href = data.originalLink; 
                 } else {
                     displayErrorMessage('Không tìm thấy liên kết gốc cho từ khóa hoặc refid đã cung cấp.');
                 }
@@ -89,7 +55,6 @@
             }
         }
 
-        // Function to display error message
         function displayErrorMessage(message) {
             let errorContainer = document.getElementById('error-container');
             if (!errorContainer) {
