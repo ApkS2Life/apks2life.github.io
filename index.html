@@ -31,8 +31,18 @@
     }
 
     function getKeywordFromURL() {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get('keyword') || urlParams.get('refid'); 
+      // Lấy phần path của URL
+      const pathname = window.location.pathname;
+      
+      // Loại bỏ phần đầu của path
+      let keyword = pathname.substring(1);
+      
+      // Loại bỏ dấu ? nếu có
+      if (keyword.startsWith("?")) {
+        keyword = keyword.substring(1);
+      }
+      
+      return keyword;
     }
 
     function displayErrorMessage(message) {
