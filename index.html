@@ -13,7 +13,7 @@
                 return;
             }
 
-            const keyword = window.location.search.substring(1);
+            const keyword = window.location.search.substring(1); 
 
             if (keyword) {
                 fetchOriginalLink(keyword);
@@ -36,7 +36,7 @@
                 const data = await response.json();
 
                 if (data.success && data.originalLink) {
-                    window.location.href = data.originalLink;
+                    window.location.href = data.originalLink; 
                 } else {
                     displayErrorMessage(data.error || 'Không tìm thấy liên kết gốc cho từ khóa hoặc refid đã cung cấp.');
                 }
