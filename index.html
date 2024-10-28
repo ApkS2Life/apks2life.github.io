@@ -8,11 +8,11 @@
 <body>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const url = new URL(window.location.href);
-            const keyword = url.pathname.split('/').pop(); 
+            const urlParams = new URLSearchParams(window.location.search);
+            const keyword = urlParams.get(""); // Lấy keyword (parameter đầu tiên)
 
             if (!keyword) {
-                displayErrorMessage('Liên kết không hợp lệ.');
+                displayErrorMessage('Liên kết không hợp lệ. Thiếu từ khóa.');
                 return;
             }
 
@@ -33,7 +33,7 @@
                     }
                     window.location.href = redirectUrl;
                 } else {
-                    displayErrorMessage(result.error || 'Không tìm thấy liên kết gốc.');
+                    displayErrorMessage(result.error || 'Không tìm thấy liên kết rút gọn với từ khóa này.');
                 }
             } catch (error) {
                 displayErrorMessage('Đã có lỗi xảy ra. Vui lòng thử lại sau.');
