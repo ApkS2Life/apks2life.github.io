@@ -22,7 +22,7 @@
             }
 
             try {
-                const response = await fetch(`https://script.google.com/macros/s/AKfycbwIc5UgvUdJ200H3JBfar3262DvQ9R57npNVbS8YeICiQ3lo96A-gugNd7Y91rLxKZyBQ/exec?action=redirectShortLink&keyword=${keyword}`);
+                const response = await fetch(`https://script.google.com/macros/s/AKfycbwIc5UgvUdJ200H3JBfar3262DvQ9R57npNVbS8YeICiQ3lo96A-gugNd7Y91rLxKZyBQ/exec?action=redirectShortLink&${keyword}`);
                 const result = await response.json();
 
                 if (result.success && result.data.originalLink) {
