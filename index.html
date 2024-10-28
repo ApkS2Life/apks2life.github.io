@@ -9,7 +9,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const keyword = urlParams.get(""); // Lấy keyword (parameter đầu tiên)
+            const keyword = urlParams.get("?"); // Lấy keyword (parameter đầu tiên)
 
             if (!keyword) {
                 displayErrorMessage('Liên kết không hợp lệ. Thiếu từ khóa.');
