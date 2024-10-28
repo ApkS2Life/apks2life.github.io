@@ -3,84 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đang chuyển hướng...</title>
+    <title>Chuyển hướng...</title>
 </head>
 <body>
-    <input type="hidden" id="keyword" name="keyword">
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            const url = new URL(window.location.href);
+            const keyword = url.pathname.split('/').pop(); // Lấy từ khóa từ URL
+
             if (!navigator.onLine) {
                 displayErrorMessage('Không có kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
                 return;
             }
 
-            // Lấy giá trị keyword từ URL
-            const url = new URL(window.location.href);
-            const pathSegments = url.pathname.split('/');
-            let keyword = '';
-            if (pathSegments.length > 1) {
-                keyword = pathSegments[1];
+            const response = await fetch(`https://script.google.com/macros/s/AKfycbwIc5UgvUdJ200H3JBfar3262DvQ9R57npNVbS8YeICiQ3lo96A-gugNd7Y91rLxKZyBQ/exec?action=redirectShortLink&keyword=${keyword}`);
+            const result = await response.json();
+
+            if (result.success && result.originalLink) {
+                window.location.href = result.originalLink; // Chuyển hướng đến link gốc
+            } else {
+                displayErrorMessage(result.error || 'Không tìm thấy liên kết gốc.');
             }
-
-            // Gán giá trị keyword vào input hidden
-            document.getElementById('keyword').value = keyword;
-
-            // Gọi fetchOriginalLink với giá trị keyword từ input
-            fetchOriginalLink(keyword);
         });
 
-        async function fetchOriginalLink(keyword) {
-            if (!navigator.onLine) {
-                displayErrorMessage('Không có kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
-                return;
-            }
-
-            // Lấy giá trị keyword từ input hidden
-            const keywordInput = document.getElementById('keyword').value;
-
-            let url = `https://script.google.com/macros/s/AKfycbwIc5UgvUdJ200H3JBfar3262DvQ9R57npNVbS8YeICiQ3lo96A-gugNd7Y91rLxKZyBQ/exec?action=redirectShortLink&keyword=${keywordInput}`;
-            console.log("URL gửi đi:", url);
-
-            try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    cache: 'no-cache'
-                });
-                
-                // Kiểm tra response có phải JSON hợp lệ
-                response.text().then(text => {
-                    try {
-                        console.log("Response nhận được:", text);
-                        const data = JSON.parse(text);
-
-                        if (data.success && data.originalLink) {
-                            console.log("Original Link:", data.originalLink); 
-                            window.location.href = JSON.parse(data.originalLink);
-                        } else {
-                            displayErrorMessage(data.error || 'Không tìm thấy liên kết gốc.');
-                        }
-                    } catch (e) {
-                        console.error("Lỗi khi phân tích JSON:", e);
-                        console.error("Nội dung response:", text);
-                        displayErrorMessage('Lỗi khi lấy dữ liệu.');
-                    }
-                });
-
-            } catch (error) {
-                console.error('Lỗi Fetch:', error);
-                displayErrorMessage('Lỗi khi kết nối đến máy chủ.'); 
-            }
-        }
-
         function displayErrorMessage(message) {
-            let errorContainer = document.getElementById('error-container');
-            if (!errorContainer) {
-                errorContainer = document.createElement('div');
-                errorContainer.id = 'error-container';
-                errorContainer.style.color = 'red';
-                document.body.appendChild(errorContainer);
-            }
+            const errorContainer = document.createElement('div');
+            errorContainer.style.color = 'red';
+            errorContainer.style.textAlign = 'center';
+            errorContainer.style.marginTop = '20px';
             errorContainer.textContent = message;
+            document.body.appendChild(errorContainer);
         }
     </script>
 </body>
