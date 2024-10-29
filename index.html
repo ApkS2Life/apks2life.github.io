@@ -15,7 +15,7 @@
                 return;
             }
 
-            fetch(`https://script.google.com/macros/s/AKfycbwIc5UgvUdJ200H3JBfar3262DvQ9R57npNVbS8YeICiQ3lo96A-gugNd7Y91rLxKZyBQ/exec?action=redirectShortLink&keyword=${keyword}`)
+            fetch(`https://script.google.com/macros/s/AKfycbwIc5UgvUdJ200H3JBfar3262DvQ9R57npNVbS8YeICiQ3lo96A-gugNd7Y91rLxKZyBQ/exec?action=redirectShortLink&${keyword}`)
                 .then(response => response.json())
                 .then(result => {
                     if (result.success && result.data.originalLink) {
